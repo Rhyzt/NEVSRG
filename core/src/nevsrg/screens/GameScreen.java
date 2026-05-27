@@ -1,9 +1,13 @@
 package nevsrg.screens;
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -16,19 +20,31 @@ import nevsrg.input.InputHandler;
 import nevsrg.parser.BeatmapParser;
 import nevsrg.parser.ChartBuilder;
 import nevsrg.parser.NEVSRGParser;
+import nevsrg.puntuacion.GestorPuntuacion;
 import nevsrg.puntuacion.IStrategyJudge;
 import nevsrg.puntuacion.JudgeEstandar;
+import nevsrg.puntuacion.TipoJudgement;
+import nevsrg.visual.GestorVisualJudges;
 
 public class GameScreen implements Screen {
+	// Dibujado
 	private SpriteBatch batch;
 	FitViewport viewport;
 	private OrthographicCamera camara;
+	
+	// Informacion Nivel
 	private Nivel nivel;
 	
+	// Texturas
 	private Texture texturaNotaNormal;
     private Texture texturaCuerpoLarga;
     private Texture texturaColaLarga;
     private Texture texturaReceptores;
+    private BitmapFont letra;
+    
+    // Referentes al Score y Judgements
+    private GestorPuntuacion gestorMatematico;
+    private GestorVisualJudges gestorGrafico;
 	
 	public GameScreen() {
 		// Relacionados al dibujado
@@ -37,20 +53,20 @@ public class GameScreen implements Screen {
 		this.batch = new SpriteBatch();
 		
 		// Texturas
-		texturaNotaNormal = new Texture("nota.png");
-		texturaCuerpoLarga = new Texture("cuerpoLN.png");
-		texturaColaLarga = new Texture("colaLN.png");
-		texturaReceptores = new Texture("receptor.png");
+		texturaNotaNormal = new Texture("notes/nota.png");
+		texturaCuerpoLarga = new Texture("notes/cuerpoLN.png");
+		texturaColaLarga = new Texture("notes/colaLN.png");
+		texturaReceptores = new Texture("notes/receptor.png");
 		
 		// Instanciar Judge
 		IStrategyJudge judge = new JudgeEstandar();
 		
 		// Generar Carriles
 		Carril[] carriles = new Carril[4];
-		float anchoCarril = 128f;
-		float margenIzquierdo = 384f;   
-        float receptorY = 100f;         
-        float scrollSpeed = 1.2f;
+		float anchoCarril = 90f;
+		float margenIzquierdo = 460f;
+        float receptorY = 70f;
+        float scrollSpeed = 1.3f;
         
         for (int i = 0; i < 4; i++) {
             float posicionX = margenIzquierdo + (i * anchoCarril);
@@ -62,11 +78,32 @@ public class GameScreen implements Screen {
         parser.procesarMapa("charts/mapa/si.nevsrg");
         this.nivel = builder.obtenerNivelTerminado();
         
-        // Configurar el manejador de inputs
+        // Cargar la clase que maneje los inputs
         InputHandler inputHandler = new InputHandler(this.nivel);
         Gdx.input.setInputProcessor(inputHandler);
         
-        // Configurar la Musica
+        // Cargar las imagenes de los Judgements
+        Map<TipoJudgement, Texture> texturasJudges = new EnumMap<>(TipoJudgement.class);
+        texturasJudges.put(TipoJudgement.MARVELOUS, new Texture("judgements/marvelous.png"));
+        texturasJudges.put(TipoJudgement.PERFECT, new Texture("judgements/perfect.png"));
+        texturasJudges.put(TipoJudgement.GREAT, new Texture("judgements/great.png"));
+        texturasJudges.put(TipoJudgement.GOOD, new Texture("judgements/good.png"));
+        texturasJudges.put(TipoJudgement.BAD, new Texture("judgements/bad.png"));
+        texturasJudges.put(TipoJudgement.MISS, new Texture("judgements/miss.png"));
+        
+        // Instanciar los observers
+        gestorMatematico = new GestorPuntuacion();
+        letra = new BitmapFont();
+        gestorGrafico = new GestorVisualJudges(letra, texturasJudges);
+        
+        // Suscribir los observers a los carriles
+        for (int i = 0 ; i < 4 ; i++) {
+        	carriles[i].agregarObservador(gestorMatematico);
+        	carriles[i].agregarObservador(gestorGrafico);
+        }
+        
+        
+        // Cargar la Musica (Ultimo Paso)
         AudioManager.getInstancia().reproducirCancion(this.nivel.getRutaAudio());
 	}
 	
@@ -81,6 +118,7 @@ public class GameScreen implements Screen {
 		batch.setProjectionMatrix(camara.combined);
 		batch.begin();
 		nivel.renderizar(batch);
+		gestorGrafico.renderizar(batch, AudioManager.getInstancia().getTiempoMS());
 		batch.end();
 	}
 	
