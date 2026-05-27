@@ -10,7 +10,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		
 		
-		config.setForegroundFPS(144);
+		config.setForegroundFPS(1000);
 		config.setTitle("NEVSRG");
 		
 		config.setWindowedMode(1280, 720);

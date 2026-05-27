@@ -9,25 +9,31 @@ import nevsrg.entidades.NotaNormal;
 
 public class ChartBuilder implements IBuilderChart {
 	private Carril[] carriles;
+	
 	private String rutaAudio;
+	private String titulo;
+	private String artista;
+	private String mapper;
 	
 	private Texture texturaNotaNormal;
     private Texture texturaCuerpoLarga;
     private Texture texturaColaLarga;
-    
+
     public ChartBuilder(Carril[] carriles,
     		Texture texturaNotaNormal,
     		Texture texturaCuerpoLarga,
     		Texture texturaColaLarga) {
     	this.carriles = carriles;
+    	
     	this.texturaNotaNormal = texturaNotaNormal;
     	this.texturaCuerpoLarga = texturaCuerpoLarga;
     	this.texturaColaLarga = texturaColaLarga;
     }
 	
-	public void setRutaCancion(String ruta) {
-		rutaAudio = ruta;
-	}
+	public void setRutaCancion(String ruta) { this.rutaAudio = ruta; }
+	public void setArtista(String artista) { this.artista = artista; }
+	public void setTitulo(String titulo) { this.titulo = titulo; }
+	public void setMapper(String mapper) { this.mapper = mapper; }
 	
 	public void agregarNotaNormal(int numeroCarril, long hitTime) {
 		NotaNormal nota = new NotaNormal(hitTime, texturaNotaNormal);
@@ -39,7 +45,7 @@ public class ChartBuilder implements IBuilderChart {
 	}
 	
 	public Nivel obtenerNivelTerminado() {
-		Nivel nivel = new Nivel(carriles, rutaAudio);
+		Nivel nivel = new Nivel(carriles, rutaAudio, artista, titulo, mapper);
 		return nivel;
 	}
 }

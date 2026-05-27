@@ -37,9 +37,9 @@ public class Carril {
 	public float getReceptorY() { return receptorY; }
 	public float getScrollSpeed() { return scrollSpeed; }
 	
-	public void setPosicionX(float n) { posicionX = n;}
-	public void setReceptorY(float n) { receptorY = n;} 
-	public void setScrollSpeed(float n) { scrollSpeed = n;}
+	public void setPosicionX(float n) { posicionX = n; }
+	public void setReceptorY(float n) { receptorY = n; } 
+	public void setScrollSpeed(float n) { scrollSpeed = n; }
 	
 	/**
 	 * Renderiza las notas en pantalla
@@ -86,7 +86,7 @@ public class Carril {
 		// Dibujado de las notas que quedan en la cola
 		for (Nota nota : colaNotas) {
 			long diferenciaTiempo = nota.getHitTime() - tiempoAudioActual; // 
-			float posY = receptorY + (diferenciaTiempo * scrollSpeed); // 
+			float posY = receptorY + ((nota.getHitTime() - tiempoAudioActual) * scrollSpeed); // 
 			
 			if (posY > 720) {
 				break;

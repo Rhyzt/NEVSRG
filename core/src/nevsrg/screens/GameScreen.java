@@ -20,6 +20,7 @@ import nevsrg.input.InputHandler;
 import nevsrg.parser.BeatmapParser;
 import nevsrg.parser.ChartBuilder;
 import nevsrg.parser.NEVSRGParser;
+import nevsrg.parser.OsuParser;
 import nevsrg.puntuacion.GestorPuntuacion;
 import nevsrg.puntuacion.IStrategyJudge;
 import nevsrg.puntuacion.JudgeEstandar;
@@ -34,6 +35,7 @@ public class GameScreen implements Screen {
 	
 	// Informacion Nivel
 	private Nivel nivel;
+	private String rutaArchivo;
 	
 	// Texturas
 	private Texture texturaNotaNormal;
@@ -66,7 +68,7 @@ public class GameScreen implements Screen {
 		float anchoCarril = 90f;
 		float margenIzquierdo = 460f;
         float receptorY = 70f;
-        float scrollSpeed = 1.3f;
+        float scrollSpeed = 1.4f;	
         
         for (int i = 0; i < 4; i++) {
             float posicionX = margenIzquierdo + (i * anchoCarril);
@@ -74,8 +76,8 @@ public class GameScreen implements Screen {
         }
         
         ChartBuilder builder = new ChartBuilder(carriles, texturaNotaNormal, texturaCuerpoLarga, texturaColaLarga);
-        BeatmapParser parser = new NEVSRGParser(builder);
-        parser.procesarMapa("charts/mapa/si.nevsrg");
+        BeatmapParser parser = new OsuParser(builder);
+        parser.procesarMapa("charts/tuyu/TUYU - Loneliness and the Future (nyawaa) [There is Nothing].osu");
         this.nivel = builder.obtenerNivelTerminado();
         
         // Cargar la clase que maneje los inputs

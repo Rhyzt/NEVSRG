@@ -34,12 +34,12 @@ public class NotaLarga extends Nota {
 		// Orden de dibujado: Cola, Cuerpo, Cabeza.
 		float yCola = y + duracionMS * scrollSpeed; // Se calcula donde deberia ir la cola
 		batch.draw(texturaCola, x, yCola); // Se dibuja la cola del Noodle
-		
+
+
 		float alturaCuerpo = yCola - y; // Se calcula el largo del cuerpo
 		// Aplica offset  para que aparezca en el medio de la nota y no se vea por los costados inferiores
 		batch.draw(texturaCuerpo, x, y + OFFSET, texturaCabeza.getHeight(), alturaCuerpo - OFFSET); 
-		
+
 		batch.draw(texturaCabeza, x, y); // Se dibuja la cabeza del Noodle
 	}
-	
 }

@@ -16,7 +16,7 @@ public class AudioManager {
 	}
 	
 	public void reproducirCancion(String rutaMusica) {
-		Music musica = Gdx.audio.newMusic(Gdx.files.internal("charts/mapa/audio.mp3"));
+		Music musica = Gdx.audio.newMusic(Gdx.files.internal(rutaMusica));
 		this.cancionActual = musica;
 		this.cancionActual.play();
 	}
