@@ -17,7 +17,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import nevsrg.audio.AudioManager;
+import nevsrg.audio.AudioManagerSingleton;
 import nevsrg.entidades.Carril;
 import nevsrg.entidades.GameNEVSRG;
 import nevsrg.entidades.MetadataNivel;
@@ -151,7 +151,7 @@ public class GameScreen implements Screen {
         
         
         // Cargar y Reproducir la Musica (Ultimo Paso)
-        AudioManager.getInstancia().reproducirCancion(this.nivel.getRutaAudio());
+        AudioManagerSingleton.getInstancia().reproducirCancion(this.nivel.getRutaAudio());
 	}
 	
 	
@@ -162,7 +162,7 @@ public class GameScreen implements Screen {
 	@Override
 	public void render(float delta) {
 		ScreenUtils.clear(0, 0, 0, 1);
-		long tiempoActual = AudioManager.getInstancia().getTiempoMS();
+		long tiempoActual = AudioManagerSingleton.getInstancia().getTiempoMS();
 		
 		if (tiempoActual >= tiempoUltimaNota) {
 			nivelTerminado = true;
@@ -181,8 +181,15 @@ public class GameScreen implements Screen {
 		    }
 		    
 			if (tiempoDesdeFin >= 4) {
-				AudioManager.getInstancia().dejarDeReproducirCancion();
-				game.setScreen(new ResultScreen(game, gestorMatematico));
+				AudioManagerSingleton.getInstancia().dejarDeReproducirCancion();
+				Map<TipoJudgement, Texture> texturasJudges = new EnumMap<>(TipoJudgement.class);
+		        texturasJudges.put(TipoJudgement.MARVELOUS, new Texture("judgements/marvelous.png"));
+		        texturasJudges.put(TipoJudgement.PERFECT, new Texture("judgements/perfect.png"));
+		        texturasJudges.put(TipoJudgement.GREAT, new Texture("judgements/great.png"));
+		        texturasJudges.put(TipoJudgement.GOOD, new Texture("judgements/good.png"));
+		        texturasJudges.put(TipoJudgement.BAD, new Texture("judgements/bad.png"));
+		        texturasJudges.put(TipoJudgement.MISS, new Texture("judgements/miss.png"));
+				game.setScreen(new ResultScreen(game, gestorMatematico, texturasJudges));
 			}
 			 
 		}
@@ -232,7 +239,7 @@ public class GameScreen implements Screen {
 					if (contadorEsc == 1 && (tiempoActual - tiempoUltimoEsc) <= LIMITE_MS) { 
 						// Segunda pulsacion fue dentro del tiempo de 1s
 						contadorEsc = 0;
-						AudioManager.getInstancia().dejarDeReproducirCancion();
+						AudioManagerSingleton.getInstancia().dejarDeReproducirCancion();
 						game.setScreen(new SelectionScreen(game));
 					} else {
 						contadorEsc = 1;

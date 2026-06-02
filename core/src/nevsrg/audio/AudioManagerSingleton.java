@@ -3,15 +3,15 @@ package nevsrg.audio;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 
-public class AudioManager {
-	private static AudioManager instancia;
+public class AudioManagerSingleton {
+	private static AudioManagerSingleton instancia;
 	private Music cancionActual;
 	
-	private AudioManager(){}
+	private AudioManagerSingleton(){}
 	
-	public static AudioManager getInstancia() {
+	public static AudioManagerSingleton getInstancia() {
 		if (instancia == null)
-			instancia = new AudioManager();
+			instancia = new AudioManagerSingleton();
 		return instancia;
 	}
 	

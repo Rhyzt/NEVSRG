@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.Map;
 
-import nevsrg.audio.AudioManager;
+import nevsrg.audio.AudioManagerSingleton;
 
 
 
@@ -31,7 +31,7 @@ public class GestorVisualPuntuacion implements IObserverJudge{
 	
 	public void onJudgeEvaluado(TipoJudgement resultado) {
 		judgeActual = texturasJudges.get(resultado);
-		tiempoAparicion = AudioManager.getInstancia().getTiempoMS();
+		tiempoAparicion = AudioManagerSingleton.getInstancia().getTiempoMS();
 	}
 	
 	public void renderizar(SpriteBatch batch, long tiempoAudioActual) {

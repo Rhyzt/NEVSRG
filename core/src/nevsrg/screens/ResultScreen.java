@@ -3,14 +3,15 @@ package nevsrg.screens;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.InputMultiplexer;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -19,10 +20,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import nevsrg.entidades.GameNEVSRG;
-import nevsrg.entidades.MetadataNivel;
-import nevsrg.parser.LectorMetadata;
-import nevsrg.parser.MetadataNEVSRG;
-import nevsrg.parser.MetadataOsu;
 import nevsrg.puntuacion.GestorPuntuacion;
 import nevsrg.puntuacion.TipoJudgement;
 
@@ -35,17 +32,17 @@ public class ResultScreen implements Screen {
 	private Map<TipoJudgement, Texture> mapaTexturas;
 	
 	
-	public ResultScreen(GameNEVSRG game, GestorPuntuacion gestor) {
+	public ResultScreen(GameNEVSRG game, GestorPuntuacion gestor, Map<TipoJudgement, Texture> mapaTexturas) {
 		this.game = game;
 		this.informacionPuntuacion = gestor;
+		this.mapaTexturas = mapaTexturas;
 	}
 	
 	@Override
 	public void show() {
         // Cargar el canvas para colocar la tabla
         stage = new Stage(new ScreenViewport());
-        Gdx.input.setInputProcessor(stage); // Habilitar la deteccion de clicks
-
+       
         // Cargar estilos visuales
         skin = new Skin(Gdx.files.internal("uiskin.json")); 
 
@@ -54,29 +51,64 @@ public class ResultScreen implements Screen {
         titulo.setFontScale(2f);
         titulo.pack();
         titulo.setPosition(640 - titulo.getWidth() / 2f, 620);
+        stage.addActor(titulo);
         
         // Acuraccy
         String accTexto = String.format("Accuracy: %.2f%%", informacionPuntuacion.getPrecision());
         Label accuracy = new Label(accTexto, skin);
         accuracy.pack();
         accuracy.setPosition(640 - accuracy.getWidth() / 2f, 560);
+        stage.addActor(accuracy);
         
         // Combo
         String comboTexto = String.format("Combo %d", informacionPuntuacion.getComboMaximo());
         Label combo = new Label(comboTexto, skin);
         combo.pack();
         combo.setPosition(640 - combo.getWidth() / 2f, 510);
+        stage.addActor(combo);
         
         // Conteo de Judges
         Table tablaJudges = new Table();
-        tablaJudges.setPosition(440,200);
-        for (TipoJudgement judge : TipoJudgement.values()) {
+        tablaJudges.setPosition(630,330);
+        for (TipoJudgement tipo : TipoJudgement.values()) {
         	//Imagen del judge
-        	Image imagenJudge = new Image()
+        	Image imagenJudge = new Image(mapaTexturas.get(tipo));
+        	tablaJudges.add(imagenJudge).width(120).height(40).left();
+        	
+        	//Cantidad
+        	Label cantidad = new Label(String.valueOf(informacionPuntuacion.getCantidadJudges(tipo)), skin);
+        	tablaJudges.add(cantidad).width(80).right();
+        	tablaJudges.row().padTop(8);
         }
-
-        // Se sube la tabla principal al canvas (stage)
-        //stage.addActor();
+        // Se sube la tabla de judges al canvas (stage)
+        stage.addActor(tablaJudges);
+        
+        // Boton para volver
+        TextButton botonVolver = new TextButton("Volver al menu", skin);
+        botonVolver.setSize(200, 50);
+        botonVolver.setPosition(640 - 100, 60);
+        botonVolver.addListener(new ClickListener() {
+        	@Override
+        	public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new SelectionScreen(game));
+            }
+        });
+        stage.addActor(botonVolver);
+        
+        // Para tener mas de un input handler a la vez
+     	InputMultiplexer multiplexer = new InputMultiplexer();
+        multiplexer.addProcessor(stage);
+        multiplexer.addProcessor(new InputAdapter() {
+        	@Override
+            public boolean keyDown(int keycode) {
+                if (keycode == Input.Keys.ESCAPE) {
+                    game.setScreen(new SelectionScreen(game));
+                    return true;
+                }
+                return false;
+            }
+        });
+        Gdx.input.setInputProcessor(multiplexer);
     }
 
     @Override
