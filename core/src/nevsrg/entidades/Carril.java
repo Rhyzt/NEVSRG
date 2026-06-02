@@ -7,6 +7,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import nevsrg.puntuacion.IStrategyJudge;
 import nevsrg.puntuacion.IObserverJudge;
 import nevsrg.puntuacion.TipoJudgement;
+import nevsrg.visual.Assets;
+import nevsrg.visual.Recursos;
 
 import java.util.ArrayList;
 import java.util.Deque;
@@ -23,13 +25,13 @@ public class Carril {
 	private List<IObserverJudge> observadores;
 	
 	   
-	public Carril(float posicionX, float receptorY, float scrollSpeed, IStrategyJudge judge, Texture texturaReceptor) {
+	public Carril(float posicionX, float receptorY, float scrollSpeed, IStrategyJudge judge) {
         this.colaNotas = new LinkedList<>();
         this.posicionX = posicionX;
         this.receptorY = receptorY;
         this.scrollSpeed = scrollSpeed; 
         this.judge = judge;
-        this.texturaReceptor = texturaReceptor;
+        this.texturaReceptor = Assets.getInstancia().get(Recursos.RECEPTOR);
         this.observadores = new ArrayList<>();
     }
 	

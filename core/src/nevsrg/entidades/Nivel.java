@@ -2,7 +2,7 @@ package nevsrg.entidades;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import nevsrg.audio.AudioManagerSingleton;
+import nevsrg.audio.AudioManager;
 
 public class Nivel {
 	private Carril[] carriles;
@@ -28,14 +28,14 @@ public class Nivel {
 	private Carril getCarril(int indiceCarril) { return carriles[indiceCarril]; }
 	
 	public void presionarCarril(int indiceCarril) {
-		long tiempoAudioActual = AudioManagerSingleton.getInstancia().getTiempoMS();
+		long tiempoAudioActual = AudioManager.getInstancia().getTiempoMS();
 		Carril carril = getCarril(indiceCarril);
 		if (carril != null)
 			carril.evaluarHit(tiempoAudioActual);
 	}
 	
 	public void soltarCarril(int indiceCarril) {
-		long tiempoAudioActual = AudioManagerSingleton.getInstancia().getTiempoMS();
+		long tiempoAudioActual = AudioManager.getInstancia().getTiempoMS();
 		Carril carril = getCarril(indiceCarril);
 		if (carril != null)
 			carril.evaluarRelease(tiempoAudioActual);
@@ -43,7 +43,7 @@ public class Nivel {
 	
 	public void renderizar(SpriteBatch batch) {
 		//Obtenemos el ms a dibujar 
-		long tiempoAudioActual = AudioManagerSingleton.getInstancia().getTiempoMS();
+		long tiempoAudioActual = AudioManager.getInstancia().getTiempoMS();
 		
 		// Dibujar cada carril
 		for(Carril carril : carriles) {

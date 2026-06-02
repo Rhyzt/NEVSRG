@@ -3,9 +3,13 @@ package nevsrg.puntuacion;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import java.util.EnumMap;
 import java.util.Map;
 
-import nevsrg.audio.AudioManagerSingleton;
+import nevsrg.audio.AudioManager;
+import nevsrg.visual.Assets;
+import nevsrg.visual.Recursos;
 
 
 
@@ -19,19 +23,25 @@ public class GestorVisualPuntuacion implements IObserverJudge{
 	// Texturas de Judgements
 	private Map<TipoJudgement, Texture> texturasJudges;
 	
-	public GestorVisualPuntuacion(BitmapFont letra, Map<TipoJudgement, Texture> texturasJudges, GestorPuntuacion gestor) {
+	public GestorVisualPuntuacion(BitmapFont letra, GestorPuntuacion gestor) {
 		this.gestor = gestor;
 		judgeActual = null;
 		tiempoAparicion = 0;
 		// La textura de los judges durara 1 segundo en pantalla, a menos que sea interrumpido por otro
 		duracionMaxima = 1000;
 		this.letra = letra;
-		this.texturasJudges = texturasJudges;
+		this.texturasJudges =  new EnumMap<>(TipoJudgement.class);
+        texturasJudges.put(TipoJudgement.MARVELOUS, Assets.getInstancia().get(Recursos.JUDGE_MARVELOUS));
+        texturasJudges.put(TipoJudgement.PERFECT, Assets.getInstancia().get(Recursos.JUDGE_PERFECT));
+        texturasJudges.put(TipoJudgement.GREAT, Assets.getInstancia().get(Recursos.JUDGE_GREAT));
+        texturasJudges.put(TipoJudgement.GOOD, Assets.getInstancia().get(Recursos.JUDGE_GOOD));
+        texturasJudges.put(TipoJudgement.BAD, Assets.getInstancia().get(Recursos.JUDGE_BAD));
+        texturasJudges.put(TipoJudgement.MISS, Assets.getInstancia().get(Recursos.JUDGE_MISS));
 	}
 	
 	public void onJudgeEvaluado(TipoJudgement resultado) {
 		judgeActual = texturasJudges.get(resultado);
-		tiempoAparicion = AudioManagerSingleton.getInstancia().getTiempoMS();
+		tiempoAparicion = AudioManager.getInstancia().getTiempoMS();
 	}
 	
 	public void renderizar(SpriteBatch batch, long tiempoAudioActual) {
