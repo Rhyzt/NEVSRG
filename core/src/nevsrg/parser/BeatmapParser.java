@@ -1,5 +1,6 @@
 package nevsrg.parser;
 
+import nevsrg.entidades.MetadataNivel;
 import nevsrg.entidades.Nivel;
 
 public abstract class BeatmapParser { // Director del Builder, que tambien actua como parte del Template Method
@@ -13,17 +14,15 @@ public abstract class BeatmapParser { // Director del Builder, que tambien actua
 	 * como pueden ser .sm (stepmania), .osu (osu!) o .qua (quaver)
 	 * todos son un .txt basicamente pero necesitan ser leidos de diferentes maneras
 	*/
-	public final Nivel procesarMapa(String rutaArchivo) {
+	public final Nivel procesarMapa(String rutaArchivo, MetadataNivel metadata) {
 		abrirArchivo(rutaArchivo);
-		procesarDatosCancion();
+		builder.setMetadata(metadata);
 		procesarNotas();
 		cerrarArchivo();
-		
 		return builder.obtenerNivelTerminado();
 	}
 	
 	protected abstract void abrirArchivo(String rutaArchivo);
-    protected abstract void procesarDatosCancion();
     protected abstract void procesarNotas();
     protected abstract void cerrarArchivo();
 }

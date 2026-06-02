@@ -10,7 +10,8 @@ public abstract class Nota {
 		this.hitTime = hitTime;
 	}
 	
-	public abstract void dibujar(SpriteBatch batch, float x, float y, float scrollSpeed);
+	public abstract void dibujar(SpriteBatch batch, float x, float receptorY, float tiempoAudioActual, float scrollSpeed);
+	public abstract long getTiempoFin();
 	
 	public long getHitTime() { return hitTime; }
 }

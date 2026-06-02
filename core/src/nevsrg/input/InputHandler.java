@@ -3,8 +3,6 @@ package nevsrg.input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 
-import nevsrg.audio.AudioManager;
-import nevsrg.entidades.Carril;
 import nevsrg.entidades.Nivel;
 
 public class InputHandler extends InputAdapter {
@@ -15,10 +13,10 @@ public class InputHandler extends InputAdapter {
 		this.nivel = nivel;
 		
 		teclasAsignadas = new int[4];
-		teclasAsignadas[0] = Keys.D;
-        teclasAsignadas[1] = Keys.F;
-        teclasAsignadas[2] = Keys.J;
-        teclasAsignadas[3] = Keys.K;
+		teclasAsignadas[0] = Keys.Z;
+        teclasAsignadas[1] = Keys.C;
+        teclasAsignadas[2] = Keys.COMMA;
+        teclasAsignadas[3] = Keys.SLASH;
 	}
 	
 	/**

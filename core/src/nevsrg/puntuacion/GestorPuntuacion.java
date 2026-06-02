@@ -28,6 +28,10 @@ public class GestorPuntuacion implements IObserverJudge {
 	public int getCantidadJudges(TipoJudgement judge) {
 		return conteoJudges.get(judge);
 	}
+	public int getComboActual() { return comboActual; }
+	public int getComboMaximo() { return comboMaximo; }
+	public float getPrecision() { return precision; }
+	public int getNotasTotales() { return notasTotales; }
 	
 	@Override
 	public void onJudgeEvaluado(TipoJudgement resultado) {

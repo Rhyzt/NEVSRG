@@ -21,9 +21,24 @@ public class AudioManager {
 		this.cancionActual.play();
 	}
 	
+	public void dejarDeReproducirCancion() {
+		if (cancionActual != null) {
+			this.cancionActual.stop();
+			this.cancionActual.dispose();
+			cancionActual = null;	
+		}
+	}
+	
 	public long getTiempoMS() {
 		if (cancionActual != null) {
 			return (long) (cancionActual.getPosition() * 1000f);
+		}
+		return 0;
+	}
+	
+	public float getTiempoFloatMS() {
+		if (cancionActual != null) {
+			return (float) (cancionActual.getPosition() * 1000f);
 		}
 		return 0;
 	}

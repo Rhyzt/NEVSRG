@@ -1,6 +1,5 @@
 package nevsrg.entidades;
 
-import java.util.Queue;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -10,13 +9,14 @@ import nevsrg.puntuacion.IObserverJudge;
 import nevsrg.puntuacion.TipoJudgement;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
 import java.util.LinkedList;
 
 public class Carril {
 	private Texture texturaReceptor;
 	private IStrategyJudge judge;
-	private Queue<Nota> colaNotas;
+	private Deque<Nota> colaNotas;
 	private float posicionX;
     private float receptorY;
 	private float scrollSpeed;
@@ -46,7 +46,7 @@ public class Carril {
 	 * @param batch
 	 * @param tiempoAudioActual
 	 */
-	public void renderizar(SpriteBatch batch, long tiempoAudioActual) {
+	public void renderizar(SpriteBatch batch, float tiempoAudioActual) {
 		// Limpieza de notas perdidas
 		while (!colaNotas.isEmpty()) {
 			Nota notaP = colaNotas.peek();
@@ -85,13 +85,12 @@ public class Carril {
 		
 		// Dibujado de las notas que quedan en la cola
 		for (Nota nota : colaNotas) {
-			long diferenciaTiempo = nota.getHitTime() - tiempoAudioActual; // 
-			float posY = receptorY + ((nota.getHitTime() - tiempoAudioActual) * scrollSpeed); // 
+			float posY = receptorY + ((nota.getHitTime() - tiempoAudioActual) * scrollSpeed);  
 			
 			if (posY > 720) {
 				break;
 			}
-			nota.dibujar(batch, posicionX, posY, scrollSpeed);
+			nota.dibujar(batch, posicionX, receptorY, tiempoAudioActual, scrollSpeed);
 		}
 		batch.draw(texturaReceptor, posicionX, receptorY);
 	}
@@ -171,5 +170,10 @@ public class Carril {
 	
 	public void agregarNota(Nota nota) {
 		colaNotas.add(nota);
+	}
+	
+	public long tiempoUltimaNota() {
+		if (colaNotas.isEmpty()) return 0l;
+		return colaNotas.getLast().getTiempoFin();
 	}
 }
