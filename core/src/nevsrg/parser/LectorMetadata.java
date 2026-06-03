@@ -13,7 +13,7 @@ public abstract class LectorMetadata {
 		MetadataNivel metadata = new MetadataNivel("audio.mp3", "Desconocido", archivo.nameWithoutExtension(), "Desconocido");
         metadata.setExtension(extension);
 		
-     // Leemos el archivo
+        // Leemos el archivo
 		try(BufferedReader reader = new BufferedReader(archivo.reader("UTF-8"))) {
 			String linea;
 				while ((linea = reader.readLine()) != null) {

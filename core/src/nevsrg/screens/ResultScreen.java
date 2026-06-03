@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
@@ -52,7 +53,7 @@ public class ResultScreen implements Screen {
 		stage.addActor(titulo);
 
 		// Acuraccy
-		String accTexto = String.format("Accuracy: %.2f%%", informacionPuntuacion.getPrecision());
+		String accTexto = String.format("Precision: %.2f%%", informacionPuntuacion.getPrecision());
 		Label accuracy = new Label(accTexto, skin);
 		accuracy.pack();
 		accuracy.setPosition(640 - accuracy.getWidth() / 2f, 560);
@@ -67,7 +68,7 @@ public class ResultScreen implements Screen {
 
 		// Conteo de Judges
 		Table tablaJudges = new Table();
-		tablaJudges.setPosition(630, 330);
+		tablaJudges.setPosition(600, 330);
 		for (TipoJudgement tipo : TipoJudgement.values()) {
 
 			Texture textura;
@@ -97,7 +98,8 @@ public class ResultScreen implements Screen {
 
 			// Imagen del judge
 			Image imagenJudge = new Image(textura);
-			tablaJudges.add(imagenJudge).width(120).height(40).left();
+			imagenJudge.setScaling(Scaling.fit);
+			tablaJudges.add(imagenJudge).height(40).width(200).left();
 
 			// Cantidad
 			Label cantidad = new Label(String.valueOf(informacionPuntuacion.getCantidadJudges(tipo)), skin);
@@ -122,7 +124,7 @@ public class ResultScreen implements Screen {
 		// Para tener mas de un input handler a la vez
 		InputMultiplexer multiplexer = new InputMultiplexer();
 		multiplexer.addProcessor(stage);
-		multiplexer.addProcessor(new InputAdapter() {
+		multiplexer.addProcessor(new InputAdapter() {	
 			@Override
 			public boolean keyDown(int keycode) {
 				if (keycode == Input.Keys.ESCAPE) {

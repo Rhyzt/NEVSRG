@@ -63,7 +63,7 @@ public class GameScreen implements Screen {
 		this.batch = new SpriteBatch();
 		this.fontFPS = new BitmapFont();
 		
-		// Pixel negro
+		// Pixel negro para Fade Out
 		Pixmap pm = new Pixmap(1, 1, Pixmap.Format.RGBA8888);
 		pm.setColor(1, 1, 1, 1);
 		pm.fill();
@@ -71,7 +71,8 @@ public class GameScreen implements Screen {
 		pm.dispose();
 		
 		
-		// Instanciar Judge
+		// Crear Judge
+		// TODO: Modificarlo para que este en un apartado de configs y se pueda cambiar entre los varios que existen
 		IStrategyJudge judge = new JudgeEstandar();
 		
 		// Generar Carriles
@@ -94,7 +95,7 @@ public class GameScreen implements Screen {
         switch (ext) {
         	case "osu":
         		parser = new OsuParser(builder);
-        		break;
+        		break;	
         	case "nevsrg":
         		parser = new NEVSRGParser(builder);
         		break;
@@ -140,9 +141,13 @@ public class GameScreen implements Screen {
 	
 	@Override
 	public void render(float delta) {
+		//Limpiar pantalla
 		ScreenUtils.clear(0, 0, 0, 1);
+		
+		// Obtener el tiempo actual de la cancion que sera utilizado para renderizar
 		long tiempoActual = AudioManager.getInstancia().getTiempoMS();
 		
+		// Checkear si termino el nivel
 		if (tiempoActual >= tiempoUltimaNota) {
 			nivelTerminado = true;
 		}
@@ -166,13 +171,18 @@ public class GameScreen implements Screen {
 			 
 		}
 		
+		// Renderizado
 		camara.update();
 		batch.setProjectionMatrix(camara.combined);
 		batch.begin();
 		nivel.renderizar(batch);
 		gestorGrafico.renderizar(batch, tiempoActual);
+		
+		// Dibujar fps
 		int fps = Gdx.graphics.getFramesPerSecond();
 		fontFPS.draw(batch, "FPS: " + fps, 10, 710);
+		
+		// Si es que se inicio el fade out
 		if (iniciandoFadeOut) {
             batch.setColor(0, 0, 0, alphaFade);
             batch.draw(pixelNegro, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());

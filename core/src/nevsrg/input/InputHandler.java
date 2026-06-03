@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputAdapter;
 
 import nevsrg.entidades.Nivel;
 
+// TODO: Cambiar esta clase para que pueda ser configurada
 public class InputHandler extends InputAdapter {
 	public int[] teclasAsignadas;
 	private Nivel nivel;

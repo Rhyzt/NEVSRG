@@ -9,6 +9,10 @@ import com.badlogic.gdx.files.FileHandle;
 public class OsuParser extends BeatmapParser{
 	private BufferedReader lector;
 	
+	// Offset entre motor NEVSRG Y Osu! que existira para la reproduccion de canciones
+	/* Esta obtenido manualmente revisando un video 
+	 * para medir el desfase de una nota y la musica.
+	 */
 	private static final long OFFSET_MS = 150l;
 	
 	public OsuParser(IBuilderChart builder) {

@@ -27,6 +27,8 @@ public class Nivel {
 	
 	private Carril getCarril(int indiceCarril) { return carriles[indiceCarril]; }
 	
+	
+	// Pulsacion en un carril
 	public void presionarCarril(int indiceCarril) {
 		long tiempoAudioActual = AudioManager.getInstancia().getTiempoMS();
 		Carril carril = getCarril(indiceCarril);
@@ -34,6 +36,7 @@ public class Nivel {
 			carril.evaluarHit(tiempoAudioActual);
 	}
 	
+	// Soltar un carril
 	public void soltarCarril(int indiceCarril) {
 		long tiempoAudioActual = AudioManager.getInstancia().getTiempoMS();
 		Carril carril = getCarril(indiceCarril);
@@ -41,6 +44,7 @@ public class Nivel {
 			carril.evaluarRelease(tiempoAudioActual);
 	}
 	
+	// Renderizar las lista de notas del carril
 	public void renderizar(SpriteBatch batch) {
 		//Obtenemos el ms a dibujar 
 		long tiempoAudioActual = AudioManager.getInstancia().getTiempoMS();
@@ -53,6 +57,7 @@ public class Nivel {
 		}
 	}
 	
+	// Obtener el tiempo en el cual aparece la ultima nota (en ms)
 	public long tiempoUltimaNota( ) {
 		long masTarde = 0;
 		for (Carril carril : carriles) {

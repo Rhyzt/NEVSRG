@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -111,7 +112,7 @@ public class SelectionScreen implements Screen {
             				break;
             			}
             		}
-            		// Si se encuentra un mapa, se instancia el lector respectivo
+            		// Si se encuentra un mapa, se crea el lector respectivo
             		LectorMetadata lector = null;
                 	if (archivoMapa != null) {
                 		String extension = archivoMapa.extension();
@@ -134,7 +135,13 @@ public class SelectionScreen implements Screen {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
                             	// Se pasan la informacion necesaria para hacer el cambio de pantalla
-                            	game.setScreen(new GameScreen(game, rutaDelMapa, metadata));
+                            	try {
+                            		game.setScreen(new GameScreen(game, rutaDelMapa, metadata));
+                            	} catch (Exception ex) {
+                            		Gdx.input.setInputProcessor(stage);
+                            		mostrarError();
+                            	}
+                            	
                             }
                         });
                 		// Se a;ade el boton a la tabla
@@ -146,5 +153,33 @@ public class SelectionScreen implements Screen {
     		 // Si no existe la carpeta
 	         tabla.add(new TextButton("No se encontro la carpeta /charts/", skin)).row();
     	 }
+    }
+    
+    private void mostrarError() {
+        Dialog dialog = new Dialog("Error", skin) {
+            float tiempoVida = 0f;
+            float duracion = 2f; // segundos visible
+
+            @Override
+            public void act(float delta) {
+                super.act(delta);
+                tiempoVida += delta;
+
+                // Fade out en el ultimo segundo
+                if (tiempoVida >= duracion - 1f) {
+                    float alpha = 1f - (tiempoVida - (duracion - 1f));
+                    alpha = Math.max(alpha, 0f);
+                    getColor().a = alpha;
+                }
+                
+                // Remover cuando termina
+                if (tiempoVida >= duracion) {
+                    remove();
+                }
+            }
+        };
+
+        dialog.text("Archivo de mapa invalido o corrupto.");
+        dialog.show(stage);
     }
 }

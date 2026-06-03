@@ -33,33 +33,39 @@ public class GestorPuntuacion implements IObserverJudge {
 	public float getPrecision() { return precision; }
 	public int getNotasTotales() { return notasTotales; }
 	
+	// Sera activada en cada pulsacion o release de nota larga hecho
 	@Override
 	public void onJudgeEvaluado(TipoJudgement resultado) {
 		int cantidadActual = conteoJudges.get(resultado);
 		conteoJudges.put(resultado, cantidadActual + 1);
 		
 		if (resultado == TipoJudgement.MISS || resultado == TipoJudgement.BAD || resultado == TipoJudgement.GOOD) {
+			// Si es un combo break, se reinicia el combo.
 			if (comboActual > comboMaximo)
 				comboMaximo = comboActual;
 			comboActual = 0;
 		} else {
+			// Si no es un combo break, se aumenta el combo y se actualiza el maximo de ser necesario
 			comboActual += 1;
 			if (comboActual > comboMaximo) {
 		        comboMaximo = comboActual;
 		    }
 		}
+		// Se a;ade la nota y se recalcula la precision
 		notasTotales += 1;
 		precision = calcularPrecision();
 	}
 	
 	/*
-	 * Formula de la precision:
+	 * Formula de la precision (ponderacion):
 	 * MARVELOUS: 100%
 	 * PERFECT: 98%
 	 * GREAT: 70%
 	 * GOOD: 35%
 	 * BAD: 10%
 	 * MISS: 0%
+	 * 
+	 * Se multiplican por su %, sumadas todas y luego se dividen por el total de notas multiplicado por 100
 	 */
 	private float calcularPrecision() {
 		if (notasTotales == 0) return 100f;

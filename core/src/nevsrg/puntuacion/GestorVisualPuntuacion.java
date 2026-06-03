@@ -29,6 +29,7 @@ public class GestorVisualPuntuacion implements IObserverJudge{
 		tiempoAparicion = 0;
 		// La textura de los judges durara 1 segundo en pantalla, a menos que sea interrumpido por otro
 		duracionMaxima = 1000;
+		
 		this.letra = letra;
 		this.texturasJudges =  new EnumMap<>(TipoJudgement.class);
         texturasJudges.put(TipoJudgement.MARVELOUS, Assets.getInstancia().get(Recursos.JUDGE_MARVELOUS));
@@ -39,6 +40,7 @@ public class GestorVisualPuntuacion implements IObserverJudge{
         texturasJudges.put(TipoJudgement.MISS, Assets.getInstancia().get(Recursos.JUDGE_MISS));
 	}
 	
+	// Actualizar la textura correspondiende dependiendo del judge que se obtuvo
 	public void onJudgeEvaluado(TipoJudgement resultado) {
 		judgeActual = texturasJudges.get(resultado);
 		tiempoAparicion = AudioManager.getInstancia().getTiempoMS();
