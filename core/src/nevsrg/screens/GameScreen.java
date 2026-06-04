@@ -133,6 +133,7 @@ public class GameScreen implements Screen {
         
         // Cargar y Reproducir la Musica (Ultimo Paso)
         AudioManager.getInstancia().reproducirCancion(this.nivel.getRutaAudio());
+        AudioManager.getInstancia().pausarCancion();
 	}
 	
 	

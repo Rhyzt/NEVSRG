@@ -6,9 +6,11 @@ import com.badlogic.gdx.audio.Music;
 public class AudioManager {
 	private static AudioManager instancia;
 	private Music cancionActual;
-	private long tiempoUltimaActualizacion = 0;
-	private long tiempoAudioUltimaActualizacion = 0;
-	
+	private long tiempoUltimaActualizacion;
+	private long tiempoAudioUltimaActualizacion;
+	private long tiempoDesdeInicio;
+	private static final long OFFSET_INICIO = 1000l;
+	private boolean audioIniciado;
 	
 	private AudioManager(){}
 	
@@ -24,23 +26,35 @@ public class AudioManager {
 		tiempoUltimaActualizacion = 0;
 		tiempoAudioUltimaActualizacion = 0;
 		Music musica = Gdx.audio.newMusic(Gdx.files.internal(rutaMusica));
-		this.cancionActual = musica;
-		this.cancionActual.play();
+		cancionActual = musica;
+		audioIniciado = false;
+		cancionActual.play();
+		tiempoDesdeInicio = System.currentTimeMillis();
+		
+		
 	}	
 	
 	// Detiene la cancion guardada
 	public void dejarDeReproducirCancion() {
 		if (cancionActual != null) {
-			this.cancionActual.stop();
-			this.cancionActual.dispose();
+			cancionActual.stop();
+			cancionActual.dispose();
 			cancionActual = null;
 		}	
 	}
 	
 	// Obtener el tiempo en ms como long
 	public long getTiempoMS() {
+		long tiempo;
 		if (cancionActual != null) {
-			return (long) (cancionActual.getPosition() * 1000f);
+			if (audioIniciado == true) {
+				return (long) (cancionActual.getPosition() * 1000f);
+			} else if ((tiempo = System.currentTimeMillis() - tiempoDesdeInicio) < OFFSET_INICIO) {
+				return tiempo - OFFSET_INICIO;
+			} else {
+				cancionActual.play();
+				audioIniciado = true;
+			}
 		}
 		return 0;
 	}
@@ -61,5 +75,18 @@ public class AudioManager {
 		long msPasados = ahora - tiempoUltimaActualizacion;
 		msPasados =  Math.min(msPasados, 20l);
 		return tiempoAudio + msPasados; 
+	}
+
+	public boolean isPlaying() {
+		return cancionActual.isPlaying();
+	}
+
+	public void renaudarCancion() {
+		cancionActual.play();
+		
+	}
+
+	public void pausarCancion() {
+		cancionActual.pause();
 	}
 }
