@@ -43,7 +43,7 @@ public class GestorVisualPuntuacion implements IObserverJudge{
 	// Actualizar la textura correspondiende dependiendo del judge que se obtuvo
 	public void onJudgeEvaluado(TipoJudgement resultado) {
 		judgeActual = texturasJudges.get(resultado);
-		tiempoAparicion = AudioManager.getInstancia().getTiempoMS();
+		tiempoAparicion = AudioManager.getInstancia().getTiempoInterpoladoMS();
 	}
 	
 	public void renderizar(SpriteBatch batch, long tiempoAudioActual) {

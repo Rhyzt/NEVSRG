@@ -39,6 +39,7 @@ public class GameScreen implements Screen {
 	private Texture pixelNegro;
 	private float alphaFade = 0f;
 	private boolean iniciandoFadeOut = false;
+
 	
 	// Informacion Nivel
 	private Nivel nivel;
