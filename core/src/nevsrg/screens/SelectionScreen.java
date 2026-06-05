@@ -51,6 +51,15 @@ public class SelectionScreen implements Screen {
         // Se cargan los mapas encontrados en la carpeta destinada a estos
         cargarMapas(tablaCanciones);
 
+        TextButton botonConfiguracion = new TextButton("Configuracion", skin);
+        botonConfiguracion.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new SettingsScreen(game));
+            }
+        });
+        tablaPrincipal.add(botonConfiguracion).height(50).width(220).pad(15).right().row();
+
         // el ScrollPane	
         ScrollPane scrollPane = new ScrollPane(tablaCanciones, skin);
         scrollPane.setFadeScrollBars(false); // Para que la barra de desplazamiento siempre se vea

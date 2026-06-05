@@ -16,6 +16,8 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import nevsrg.audio.AudioManager;
+import nevsrg.config.GameSettings;
+import nevsrg.config.JudgeFactory;
 import nevsrg.entidades.Carril;
 import nevsrg.entidades.GameNEVSRG;
 import nevsrg.entidades.MetadataNivel;
@@ -28,7 +30,6 @@ import nevsrg.parser.OsuParser;
 import nevsrg.puntuacion.GestorPuntuacion;
 import nevsrg.puntuacion.GestorVisualPuntuacion;
 import nevsrg.puntuacion.IStrategyJudge;
-import nevsrg.puntuacion.JudgeEstandar;
 
 public class GameScreen implements Screen {
 	private GameNEVSRG game;
@@ -72,16 +73,17 @@ public class GameScreen implements Screen {
 		pm.dispose();
 		
 		
+		GameSettings settings = GameSettings.getInstancia();
+		
 		// Crear Judge
-		// TODO: Modificarlo para que este en un apartado de configs y se pueda cambiar entre los varios que existen
-		IStrategyJudge judge = new JudgeEstandar();
+		IStrategyJudge judge = JudgeFactory.crear(settings.judge);
 		
 		// Generar Carriles
 		Carril[] carriles = new Carril[4];
 		float anchoCarril = 90f;
 		float margenIzquierdo = 460f;
         float receptorY = 70f;
-        float scrollSpeed = 1.6f;	
+        float scrollSpeed = settings.getScrollSpeed();	
         
         for (int i = 0 ; i < carriles.length ; i++) {
             float posicionX = margenIzquierdo + (i * anchoCarril);
@@ -116,7 +118,7 @@ public class GameScreen implements Screen {
         tiempoUltimaNota = nivel.tiempoUltimaNota();
         
         // Cargar la clase que maneje los inputs
-        inputHandler = new InputHandler(this.nivel);
+        inputHandler = new InputHandler(this.nivel, settings.copiarTeclas());
         Gdx.input.setInputProcessor(inputHandler);
         
         // Instanciar los observers
