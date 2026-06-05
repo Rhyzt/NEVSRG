@@ -12,6 +12,8 @@
 
 # Package Files #
 *.jar
+!gradle/wrapper/gradle-wrapper.jar
+
 *.war
 *.nar
 *.ear
@@ -32,9 +34,10 @@ desktop/build/
 .project
 .idea/
 *.iml
+.classpath
 
 charts/
 settings.json
 
 #Gradle cache
-.gradle
+.gradle/
