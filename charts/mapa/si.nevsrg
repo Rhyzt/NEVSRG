@@ -1,7 +1,5 @@
-titulo: Cancion
-artista: Artista
-mapper: si
-audio: audio.mp3
+[Cancion]
+audio.mp3
 [Notas]
 1,2277,2944
 3,2944,0

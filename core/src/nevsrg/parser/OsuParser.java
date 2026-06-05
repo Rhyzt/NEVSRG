@@ -21,7 +21,7 @@ public class OsuParser extends BeatmapParser{
 	
 	public void abrirArchivo(String rutaArchivo){
 		// Se carga el archivo
-	    FileHandle archivoMapa = Gdx.files.internal(rutaArchivo);
+	    FileHandle archivoMapa = Gdx.files.local(rutaArchivo);
 	    
 	    // Se crea el lector
 	    this.lector = archivoMapa.reader(8192, "UTF-8");

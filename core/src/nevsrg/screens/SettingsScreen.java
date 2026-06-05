@@ -23,6 +23,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import nevsrg.config.GameSettings;
 import nevsrg.config.JudgeFactory;
 import nevsrg.entidades.GameNEVSRG;
+import nevsrg.visual.Recursos;
 
 public class SettingsScreen implements Screen {
 	private Stage stage;
@@ -40,7 +41,7 @@ public class SettingsScreen implements Screen {
 	@Override
 	public void show() {
 		stage = new Stage(new ScreenViewport());
-		skin = new Skin(Gdx.files.internal("uiskin.json"));
+		skin = new Skin(Gdx.files.internal(Recursos.UI_SKIN));
 		botonesTeclas = new TextButton[4];
 		
 		Table tabla = new Table();

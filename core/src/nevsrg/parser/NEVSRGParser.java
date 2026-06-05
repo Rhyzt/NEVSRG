@@ -15,7 +15,7 @@ public class NEVSRGParser extends BeatmapParser{
 	
 	public void abrirArchivo(String rutaArchivo){
 		// Creamos el lector con la informacion del nivel (.nevsrg)
-		FileHandle archivoMapa = Gdx.files.internal(rutaArchivo);
+		FileHandle archivoMapa = Gdx.files.local(rutaArchivo);
 		
 		this.lector = archivoMapa.reader(8192, "UTF-8");
 				

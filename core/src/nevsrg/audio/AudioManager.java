@@ -25,7 +25,7 @@ public class AudioManager {
 	public void reproducirCancion(String rutaMusica) {
 		tiempoUltimaActualizacion = 0;
 		tiempoAudioUltimaActualizacion = 0;
-		Music musica = Gdx.audio.newMusic(Gdx.files.internal(rutaMusica));
+		Music musica = Gdx.audio.newMusic(Gdx.files.local(rutaMusica));
 		cancionActual = musica;
 		audioIniciado = false;
 		cancionActual.play();

@@ -19,6 +19,7 @@ import nevsrg.entidades.MetadataNivel;
 import nevsrg.parser.LectorMetadata;
 import nevsrg.parser.MetadataNEVSRG;
 import nevsrg.parser.MetadataOsu;
+import nevsrg.visual.Recursos;
 
 public class SelectionScreen implements Screen {
 	
@@ -38,7 +39,7 @@ public class SelectionScreen implements Screen {
         Gdx.input.setInputProcessor(stage); // Habilitar la deteccion de clicks
 
         // Cargar estilos visuales
-        skin = new Skin(Gdx.files.internal("uiskin.json")); 
+        skin = new Skin(Gdx.files.internal(Recursos.UI_SKIN)); 
 
         // Cargar tabla para poder colocar todos los elementos necesarios dentro de ella
         Table tablaPrincipal = new Table();
@@ -108,60 +109,59 @@ public class SelectionScreen implements Screen {
 	    }
     
     private void cargarMapas(Table tabla) {
-    	FileHandle carpetaCharts = Gdx.files.internal("charts");
+    	FileHandle carpetaCharts = Gdx.files.local("../charts");
+    	System.out.println(Gdx.files.getLocalStoragePath().toString());
+    	if (!(carpetaCharts.exists() && carpetaCharts.isDirectory())) {
+    		carpetaCharts.mkdirs(); // Se crea la carpeta si no existe
+    	}
     	
-    	if (carpetaCharts.exists() && carpetaCharts.isDirectory()) { 
-            for (FileHandle subCarpeta : carpetaCharts.list()) { // Iterar por todas las carpetas dentro de charts
-            	if (subCarpeta.isDirectory()) {
-            		FileHandle archivoMapa = null;
+        for (FileHandle subCarpeta : carpetaCharts.list()) { // Iterar por todas las carpetas dentro de charts
+        	if (subCarpeta.isDirectory()) {
+        		FileHandle archivoMapa = null;
 
-            		for (FileHandle archivo : subCarpeta.list()) {
-            			if (archivo.extension().equals("osu") || archivo.extension().equals("nevsrg")) {
-            				archivoMapa = archivo;
-            				break;
-            			}
-            		}
-            		// Si se encuentra un mapa, se crea el lector respectivo
-            		LectorMetadata lector = null;
-                	if (archivoMapa != null) {
-                		String extension = archivoMapa.extension();
-                    	if (extension.equals("osu")) {
-                    		lector = new MetadataOsu();
-                    	} else if (extension.equals("nevsrg")) {
-                    		lector = new MetadataNEVSRG();
-                    	}
-                    }
-                	// Se extraen los datos
-                	if (lector != null) {
-                		final MetadataNivel metadata = lector.extraerMetadata(archivoMapa, archivoMapa.extension());
-                		String textoVisual = metadata.getArtista() + " - " + metadata.getTitulo() + "\n"
-                		+ "Mapper: " + metadata.getMapper();
-                		final String rutaDelMapa = archivoMapa.path();
-                		
-                		// Se crea el boton
-                		TextButton botonCancion = new TextButton(textoVisual, skin);
-                		botonCancion.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                            	// Se pasan la informacion necesaria para hacer el cambio de pantalla
-                            	try {
-                            		game.setScreen(new GameScreen(game, rutaDelMapa, metadata));
-                            	} catch (Exception ex) {
-                            		Gdx.input.setInputProcessor(stage);
-                            		mostrarError();
-                            	}
-                            	
-                            }
-                        });
-                		// Se a;ade el boton a la tabla
-                		tabla.add(botonCancion).fillX().padBottom(10).row();
-                 	}
-            	}
-            }
-    	 } else {
-    		 // Si no existe la carpeta
-	         tabla.add(new TextButton("No se encontro la carpeta /charts/", skin)).row();
-    	 }
+        		for (FileHandle archivo : subCarpeta.list()) {
+        			if (archivo.extension().equals("osu") || archivo.extension().equals("nevsrg")) {
+        				archivoMapa = archivo;
+        				break;
+        			}
+        		}
+        		// Si se encuentra un mapa, se crea el lector respectivo
+        		LectorMetadata lector = null;
+            	if (archivoMapa != null) {
+            		String extension = archivoMapa.extension();
+                	if (extension.equals("osu")) {
+                		lector = new MetadataOsu();
+                	} else if (extension.equals("nevsrg")) {
+                		lector = new MetadataNEVSRG();
+                	}
+                }
+            	// Se extraen los datos
+            	if (lector != null) {
+            		final MetadataNivel metadata = lector.extraerMetadata(archivoMapa, archivoMapa.extension());
+            		String textoVisual = metadata.getArtista() + " - " + metadata.getTitulo() + "\n"
+            		+ "Mapper: " + metadata.getMapper();
+            		final String rutaDelMapa = archivoMapa.path();
+            		
+            		// Se crea el boton
+            		TextButton botonCancion = new TextButton(textoVisual, skin);
+            		botonCancion.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                        	// Se pasan la informacion necesaria para hacer el cambio de pantalla
+                        	try {
+                        		game.setScreen(new GameScreen(game, rutaDelMapa, metadata));
+                        	} catch (Exception ex) {
+                        		Gdx.input.setInputProcessor(stage);
+                        		mostrarError();
+                        	}
+                        	
+                        }
+                    });
+            		// Se a;ade el boton a la tabla
+            		tabla.add(botonCancion).fillX().padBottom(10).row();
+             	}
+        	}
+        }
     }
     
     private void mostrarError() {

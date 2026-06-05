@@ -43,7 +43,7 @@ public class ResultScreen implements Screen {
 		stage = new Stage(new ScreenViewport());
 
 		// Cargar estilos visuales
-		skin = new Skin(Gdx.files.internal("uiskin.json"));
+		skin = new Skin(Gdx.files.internal(Recursos.UI_SKIN));
 
 		// Titulo
 		Label titulo = new Label("RESULTADO", skin);
