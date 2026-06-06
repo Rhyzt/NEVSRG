@@ -108,11 +108,23 @@ public class SelectionScreen implements Screen {
 	    }
     
     private void cargarMapas(Table tabla) {
-    	FileHandle carpetaCharts = Gdx.files.local("../charts");
+    	FileHandle carpetaCharts = Gdx.files.local("charts"); // CASO .JAR
+
+    	
+    	if (!carpetaCharts.exists()) { // CASO IDE
+            FileHandle carpetaIDE = Gdx.files.local("../charts");
+            if (carpetaIDE.exists()) {
+                carpetaCharts = carpetaIDE; // Usamos la ruta del IDE
+            }
+        }
     	if (!(carpetaCharts.exists() && carpetaCharts.isDirectory())) {
     		carpetaCharts.mkdirs(); // Se crea la carpeta si no existe
     	}
     	
+    	System.out.println("=== Ruta charts: " + carpetaCharts.path());
+	    System.out.println("=== Existe: " + carpetaCharts.exists());
+	    System.out.println("=== Cantidad de items: " + carpetaCharts.list().length);
+    	    
         for (FileHandle subCarpeta : carpetaCharts.list()) { // Iterar por todas las carpetas dentro de charts
         	if (subCarpeta.isDirectory()) {
         		FileHandle archivoMapa = null;
@@ -124,34 +136,36 @@ public class SelectionScreen implements Screen {
         			}
         		}
         		// Si se encuentra un mapa, se crea el lector respectivo
-        		LectorMetadata lector = LectorMetadataFactory.crear(archivoMapa.extension());
+        		if (archivoMapa != null) {
+        		    LectorMetadata lector = LectorMetadataFactory.crear(archivoMapa.extension());
         		
-            	// Se extraen los datos
-            	if (lector != null) {
-            		final MetadataNivel metadata = lector.extraerMetadata(archivoMapa, archivoMapa.extension());
-            		String textoVisual = metadata.getArtista() + " - " + metadata.getTitulo() + "\n"
-            		+ "Mapper: " + metadata.getMapper();
-            		final String rutaDelMapa = archivoMapa.path();
-            		
-            		// Se crea el boton
-            		TextButton botonCancion = new TextButton(textoVisual, skin);
-            		botonCancion.addListener(new ClickListener() {
-                        @Override
-                        public void clicked(InputEvent event, float x, float y) {
-                        	// Se pasan la informacion necesaria para hacer el cambio de pantalla
-                        	try {
-                        		game.setScreen(new GameScreen(game, rutaDelMapa, metadata));
-                        	} catch (Exception ex) {
-                        		Gdx.input.setInputProcessor(stage);
-                        		mostrarError();
-                        	}
-                        	
-                        }
-                    });
-            		// Se a;ade el boton a la tabla
-            		tabla.add(botonCancion).fillX().padBottom(10).row();
-             	}
-        	}
+		        	// Se extraen los datos
+		        	if (lector != null) {
+		        		final MetadataNivel metadata = lector.extraerMetadata(archivoMapa, archivoMapa.extension());
+		        		String textoVisual = metadata.getArtista() + " - " + metadata.getTitulo() + "\n"
+		        		+ "Mapper: " + metadata.getMapper();
+		        		final String rutaDelMapa = archivoMapa.path();
+		        		
+		        		// Se crea el boton
+		        		TextButton botonCancion = new TextButton(textoVisual, skin);
+		        		botonCancion.addListener(new ClickListener() {
+		                    @Override
+		                    public void clicked(InputEvent event, float x, float y) {
+		                    	// Se pasan la informacion necesaria para hacer el cambio de pantalla
+		                    	try {
+		                    		game.setScreen(new GameScreen(game, rutaDelMapa, metadata));
+		                    	} catch (Exception ex) {
+		                    		Gdx.input.setInputProcessor(stage);
+		                    		mostrarError();
+		                    	}
+		                    	
+		                    }
+		                });
+		        		// Se a;ade el boton a la tabla
+		        		tabla.add(botonCancion).fillX().padBottom(10).row();
+		         	}
+		    	}
+		    }
         }
     }
     
