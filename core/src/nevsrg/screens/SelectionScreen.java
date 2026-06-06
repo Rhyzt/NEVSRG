@@ -17,8 +17,7 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import nevsrg.entidades.GameNEVSRG;
 import nevsrg.entidades.MetadataNivel;
 import nevsrg.parser.LectorMetadata;
-import nevsrg.parser.MetadataNEVSRG;
-import nevsrg.parser.MetadataOsu;
+import nevsrg.parser.LectorMetadataFactory;
 import nevsrg.visual.Recursos;
 
 public class SelectionScreen implements Screen {
@@ -38,7 +37,7 @@ public class SelectionScreen implements Screen {
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage); // Habilitar la deteccion de clicks
 
-        // Cargar estilos visuales
+        // Cargar estilos visuales f
         skin = new Skin(Gdx.files.internal(Recursos.UI_SKIN)); 
 
         // Cargar tabla para poder colocar todos los elementos necesarios dentro de ella
@@ -110,7 +109,6 @@ public class SelectionScreen implements Screen {
     
     private void cargarMapas(Table tabla) {
     	FileHandle carpetaCharts = Gdx.files.local("../charts");
-    	System.out.println(Gdx.files.getLocalStoragePath().toString());
     	if (!(carpetaCharts.exists() && carpetaCharts.isDirectory())) {
     		carpetaCharts.mkdirs(); // Se crea la carpeta si no existe
     	}
@@ -126,15 +124,8 @@ public class SelectionScreen implements Screen {
         			}
         		}
         		// Si se encuentra un mapa, se crea el lector respectivo
-        		LectorMetadata lector = null;
-            	if (archivoMapa != null) {
-            		String extension = archivoMapa.extension();
-                	if (extension.equals("osu")) {
-                		lector = new MetadataOsu();
-                	} else if (extension.equals("nevsrg")) {
-                		lector = new MetadataNEVSRG();
-                	}
-                }
+        		LectorMetadata lector = LectorMetadataFactory.crear(archivoMapa.extension());
+        		
             	// Se extraen los datos
             	if (lector != null) {
             		final MetadataNivel metadata = lector.extraerMetadata(archivoMapa, archivoMapa.extension());

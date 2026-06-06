@@ -3,15 +3,12 @@ package nevsrg.input;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputAdapter;
 
-import nevsrg.entidades.Nivel;
-
-// TODO: Cambiar esta clase para que pueda ser configurada
 public class InputHandler extends InputAdapter {
-	public int[] teclasAsignadas;
-	private Nivel nivel;
+	private int[] teclasAsignadas;
+	private IControlCarril control;
 	
-	public InputHandler(Nivel nivel, int[] teclasConfiguradas) {
-		this.nivel = nivel;
+	public InputHandler(IControlCarril control, int[] teclasConfiguradas) {
+		this.control = control;
 		
 		teclasAsignadas = new int[4];
 		if (teclasConfiguradas != null && teclasConfiguradas.length == 4) {
@@ -41,7 +38,7 @@ public class InputHandler extends InputAdapter {
 	public boolean keyDown(int codigoKey) {
 		for (int i = 0; i < teclasAsignadas.length; i++) {
             if (codigoKey == teclasAsignadas[i]) {
-                nivel.presionarCarril(i); 
+                control.presionarCarril(i); 
                 return true;
             }
         }
@@ -52,7 +49,7 @@ public class InputHandler extends InputAdapter {
 	public boolean keyUp(int codigoKey) {
 		for (int i = 0; i < teclasAsignadas.length; i++) {
             if (codigoKey == teclasAsignadas[i]) {
-                nivel.soltarCarril(i);
+                control.soltarCarril(i);
                 return true;
             }
         }

@@ -2,6 +2,7 @@ package nevsrg.parser;
 
 public class MetadataNEVSRG extends LectorMetadata {
 	
+	@Override
 	public String buscarMapperEnLinea(String linea) {
 		String[] lineaSeparada = linea.split(":", 2);
 		if (lineaSeparada.length == 2 && lineaSeparada[0].toLowerCase().equals("mapper")) {
@@ -10,6 +11,7 @@ public class MetadataNEVSRG extends LectorMetadata {
 		return null;
 	}
 	
+	@Override
 	public String buscarTituloEnLinea(String linea) {
 		String[] lineaSeparada = linea.split(":", 2);
 		if (lineaSeparada.length == 2 && lineaSeparada[0].toLowerCase().equals("titulo")) {
@@ -17,6 +19,8 @@ public class MetadataNEVSRG extends LectorMetadata {
 		}
 		return null;
 	}
+	
+	@Override
 	public String buscarAudioEnLinea(String linea) {
 		String[] lineaSeparada = linea.split(":", 2);
 		if (lineaSeparada.length == 2 && lineaSeparada[0].toLowerCase().equals("audio")) {
@@ -24,6 +28,8 @@ public class MetadataNEVSRG extends LectorMetadata {
 		}
 		return null;
 	}
+	
+	@Override
 	public String buscarArtistaEnLinea(String linea){
 		String[] lineaSeparada = linea.split(":", 2);
 		if (lineaSeparada.length == 2 && lineaSeparada[0].toLowerCase().equals("artista")) {

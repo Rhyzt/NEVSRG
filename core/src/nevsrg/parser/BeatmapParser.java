@@ -1,9 +1,11 @@
 package nevsrg.parser;
 
+import com.badlogic.gdx.files.FileHandle;
+
 import nevsrg.entidades.MetadataNivel;
 
 public abstract class BeatmapParser { // Director del Builder, que tambien actua como parte del Template Method
-	protected IBuilderChart builder;
+	protected final IBuilderChart builder;
 	
 	public BeatmapParser(IBuilderChart builder) {
 		this.builder = builder;
@@ -13,14 +15,14 @@ public abstract class BeatmapParser { // Director del Builder, que tambien actua
 	 * como pueden ser .sm (stepmania), .osu (osu!) o .qua (quaver)
 	 * todos son un .txt basicamente pero necesitan ser leidos de diferentes maneras
 	*/
-	public final void procesarMapa(String rutaArchivo, MetadataNivel metadata) {
-		abrirArchivo(rutaArchivo);
+	public final void procesarMapa(MetadataNivel metadata, FileHandle archivoMapa) {
+		abrirArchivo(archivoMapa);
 		builder.setMetadata(metadata);
 		procesarNotas();
 		cerrarArchivo();
 	}
 	
-	protected abstract void abrirArchivo(String rutaArchivo);
+	protected abstract void abrirArchivo(FileHandle archivoMapa);
     protected abstract void procesarNotas();
     protected abstract void cerrarArchivo();
 }

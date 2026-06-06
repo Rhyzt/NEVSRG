@@ -4,18 +4,11 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import java.util.EnumMap;
 import java.util.Map;
 
-import nevsrg.audio.AudioManager;
-import nevsrg.visual.Assets;
-import nevsrg.visual.Recursos;
-
-
-
 public class GestorVisualPuntuacion implements IObserverJudge{
+	private ILectorPuntuacion puntuacion;
 	private Texture judgeActual;
-	private GestorPuntuacion gestor;
 	private long tiempoAparicion;
 	private long duracionMaxima;
 	private BitmapFont letra;
@@ -23,30 +16,24 @@ public class GestorVisualPuntuacion implements IObserverJudge{
 	// Texturas de Judgements
 	private Map<TipoJudgement, Texture> texturasJudges;
 	
-	public GestorVisualPuntuacion(BitmapFont letra, GestorPuntuacion gestor) {
-		this.gestor = gestor;
+	public GestorVisualPuntuacion(BitmapFont letra, Map<TipoJudgement, Texture> texturasJudges, ILectorPuntuacion puntuacion) {
+		this.puntuacion = puntuacion;
 		judgeActual = null;
 		tiempoAparicion = 0;
 		// La textura de los judges durara 1 segundo en pantalla, a menos que sea interrumpido por otro
 		duracionMaxima = 1000;
 		
 		this.letra = letra;
-		this.texturasJudges =  new EnumMap<>(TipoJudgement.class);
-        texturasJudges.put(TipoJudgement.MARVELOUS, Assets.getInstancia().get(Recursos.JUDGE_MARVELOUS));
-        texturasJudges.put(TipoJudgement.PERFECT, Assets.getInstancia().get(Recursos.JUDGE_PERFECT));
-        texturasJudges.put(TipoJudgement.GREAT, Assets.getInstancia().get(Recursos.JUDGE_GREAT));
-        texturasJudges.put(TipoJudgement.GOOD, Assets.getInstancia().get(Recursos.JUDGE_GOOD));
-        texturasJudges.put(TipoJudgement.BAD, Assets.getInstancia().get(Recursos.JUDGE_BAD));
-        texturasJudges.put(TipoJudgement.MISS, Assets.getInstancia().get(Recursos.JUDGE_MISS));
+		this.texturasJudges = texturasJudges;
 	}
-	
+		
 	// Actualizar la textura correspondiende dependiendo del judge que se obtuvo
 	public void onJudgeEvaluado(TipoJudgement resultado) {
 		judgeActual = texturasJudges.get(resultado);
-		tiempoAparicion = AudioManager.getInstancia().getTiempoInterpoladoMS();
+		tiempoAparicion = System.currentTimeMillis();
 	}
 	
-	public void renderizar(SpriteBatch batch, long tiempoAudioActual) {
+	public void renderizar(SpriteBatch batch) {
 		
 		
 		// Si aun no ha aparecido ningun judge
@@ -62,27 +49,27 @@ public class GestorVisualPuntuacion implements IObserverJudge{
 		
 		
 		// Se dibuja el combo
-		if (letra != null && gestor.getComboActual() >= 5) { // Solo se mostrara el combo si es mayor a 5
-			letra.draw(batch, String.valueOf(gestor.getComboActual()), posXCombo, posYCombo + 40); 
+		if (letra != null && puntuacion.getComboActual() >= 5) { // Solo se mostrara el combo si es mayor a 5
+			letra.draw(batch, String.valueOf(puntuacion.getComboActual()), posXCombo, posYCombo + 40); 
 	    }
 		
 		// Se dibuja la precision
 		if (letra != null) { 
-			letra.draw(batch, String.format("%.2f", gestor.getPrecision()) + "%", posXAccuracy, posYAccuracy); 
+			letra.draw(batch, String.format("%.2f", puntuacion.getPrecision()) + "%", posXAccuracy, posYAccuracy); 
 	    }
 		
 		// Se dibuja el conteo de judgements
 		if (letra != null) { 
-			letra.draw(batch, "Marvelous: " + String.valueOf(gestor.getCantidadJudges(TipoJudgement.MARVELOUS)), posXAccuracy, posYAccuracy - 20);
-			letra.draw(batch, "Perfect: " + String.valueOf(gestor.getCantidadJudges(TipoJudgement.PERFECT)), posXAccuracy, posYAccuracy - 40);
-			letra.draw(batch, "Great: " + String.valueOf(gestor.getCantidadJudges(TipoJudgement.GREAT)), posXAccuracy, posYAccuracy - 60);
-			letra.draw(batch, "Good: " + String.valueOf(gestor.getCantidadJudges(TipoJudgement.GOOD)), posXAccuracy, posYAccuracy - 80);
-			letra.draw(batch, "Bad: " + String.valueOf(gestor.getCantidadJudges(TipoJudgement.BAD)), posXAccuracy, posYAccuracy - 100);
-			letra.draw(batch, "Miss: " + String.valueOf(gestor.getCantidadJudges(TipoJudgement.MISS)), posXAccuracy, posYAccuracy - 120);
+			letra.draw(batch, "Marvelous: " + puntuacion.getCantidadJudges(TipoJudgement.MARVELOUS), posXAccuracy, posYAccuracy - 20);
+			letra.draw(batch, "Perfect: " + puntuacion.getCantidadJudges(TipoJudgement.PERFECT), posXAccuracy, posYAccuracy - 40);
+			letra.draw(batch, "Great: " + puntuacion.getCantidadJudges(TipoJudgement.GREAT), posXAccuracy, posYAccuracy - 60);
+			letra.draw(batch, "Good: " + puntuacion.getCantidadJudges(TipoJudgement.GOOD), posXAccuracy, posYAccuracy - 80);
+			letra.draw(batch, "Bad: " + puntuacion.getCantidadJudges(TipoJudgement.BAD), posXAccuracy, posYAccuracy - 100);
+			letra.draw(batch, "Miss: " + puntuacion.getCantidadJudges(TipoJudgement.MISS), posXAccuracy, posYAccuracy - 120);
 	    }
 		
 		// Se calcula la edad para ver si se necesita renderizar o no
-		long edad = tiempoAudioActual - tiempoAparicion;
+		long edad = System.currentTimeMillis() - tiempoAparicion;
 		if (edad > duracionMaxima) {
 			return;
 		}

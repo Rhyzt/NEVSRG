@@ -21,7 +21,6 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import nevsrg.config.GameSettings;
-import nevsrg.config.JudgeFactory;
 import nevsrg.entidades.GameNEVSRG;
 import nevsrg.visual.Recursos;
 
@@ -33,11 +32,12 @@ public class SettingsScreen implements Screen {
 	private TextButton[] botonesTeclas;
 	private int teclaEnEspera = -1;
 	
+	
 	public SettingsScreen(GameNEVSRG game) {
 		this.game = game;
 		this.settings = GameSettings.getInstancia();
 	}
-	
+	 
 	@Override
 	public void show() {
 		stage = new Stage(new ScreenViewport());
@@ -52,14 +52,15 @@ public class SettingsScreen implements Screen {
 		Label titulo = new Label("CONFIGURACION", skin);
 		titulo.setFontScale(2f);
 		tabla.add(titulo).colspan(2).padBottom(35).row();
-		
+			
+		int scrollSpeed = settings.getScrollSpeed();
 		final Label valorScroll = new Label(textoScroll(), skin);
-		final Slider sliderScroll = new Slider(GameSettings.SCROLL_MINIMO, GameSettings.SCROLL_MAXIMO, 1, false, skin);
-		sliderScroll.setValue(settings.scrollSpeedX);
+		final Slider sliderScroll = new Slider(GameSettings.getScrollMinimo(), GameSettings.getScrollMaximo(), 1, false, skin);
+		sliderScroll.setValue(scrollSpeed);
 		sliderScroll.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				settings.scrollSpeedX = (int) sliderScroll.getValue();
+				settings.setScrollSpeed((int) sliderScroll.getValue());
 				valorScroll.setText(textoScroll());
 			}
 		});
@@ -84,30 +85,22 @@ public class SettingsScreen implements Screen {
 		}
 		tabla.add(tablaTeclas).left().padBottom(32).row();
 		
+		String judge = settings.getJudge();
 		final SelectBox<String> selectorJudge = new SelectBox<String>(skin);
-		selectorJudge.setItems(JudgeFactory.getNombres());
-		selectorJudge.setSelected(settings.judge);
+		selectorJudge.setItems(settings.getJudgesDisponibles());
+		selectorJudge.setSelected(judge);
 		selectorJudge.addListener(new ChangeListener() {
 			@Override
 			public void changed(ChangeEvent event, Actor actor) {
-				settings.judge = selectorJudge.getSelected();
+				settings.setJudge(selectorJudge.getSelected());
 			}
 		});
 		
 		tabla.add(new Label("Judge", skin)).left().padRight(30).padBottom(32);
 		tabla.add(selectorJudge).width(240).left().padBottom(32).row();
 		
-		TextButton botonGuardar = new TextButton("Guardar", skin);
-		botonGuardar.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				settings.guardar();
-				game.setScreen(new SelectionScreen(game));
-			}
-		});
-		
-		TextButton botonVolver = new TextButton("Volver", skin);
-		botonVolver.addListener(new ClickListener() {
+		TextButton botonGuardarYVolver = new TextButton("Guardar y volver", skin);
+		botonGuardarYVolver.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				settings.guardar();
@@ -116,8 +109,7 @@ public class SettingsScreen implements Screen {
 		});
 		
 		Table tablaBotones = new Table();
-		tablaBotones.add(botonGuardar).width(160).height(50).padRight(16);
-		tablaBotones.add(botonVolver).width(160).height(50);
+		tablaBotones.add(botonGuardarYVolver).width(160).height(50);
 		tabla.add(tablaBotones).colspan(2).padTop(10).row();
 		
 		InputMultiplexer multiplexer = new InputMultiplexer();
@@ -127,7 +119,7 @@ public class SettingsScreen implements Screen {
 			public boolean keyDown(int keycode) {
 				if (teclaEnEspera >= 0) {
 					if (keycode != Input.Keys.ESCAPE) {
-						settings.teclas[teclaEnEspera] = keycode;
+						settings.setKeybind(teclaEnEspera, keycode);
 					}
 					teclaEnEspera = -1;
 					actualizarBotonesTeclas();
@@ -146,11 +138,11 @@ public class SettingsScreen implements Screen {
 	}
 	
 	private String textoScroll() {
-		return String.valueOf(settings.scrollSpeedX);
+		return String.valueOf(settings.getScrollSpeed());
 	}
 	
 	private String textoBotonTecla(int indice) {
-		return "Carril " + (indice + 1) + ": " + Keys.toString(settings.teclas[indice]);
+		return "Carril " + (indice + 1) + ": " + Keys.toString(settings.getKeybind(indice));
 	}
 	
 	private void actualizarBotonesTeclas() {

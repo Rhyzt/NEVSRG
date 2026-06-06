@@ -1,6 +1,9 @@
 package nevsrg.screens;
 
 
+import java.util.EnumMap;
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
@@ -15,7 +18,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import nevsrg.audio.AudioManager;
+import nevsrg.audio.ChartMusicManager;
+import nevsrg.audio.IAudioManager;
 import nevsrg.config.GameSettings;
 import nevsrg.config.JudgeFactory;
 import nevsrg.entidades.Carril;
@@ -25,17 +29,19 @@ import nevsrg.entidades.Nivel;
 import nevsrg.input.InputHandler;
 import nevsrg.parser.BeatmapParser;
 import nevsrg.parser.ChartBuilder;
-import nevsrg.parser.NEVSRGParser;
-import nevsrg.parser.OsuParser;
+import nevsrg.parser.ParserFactory;
 import nevsrg.puntuacion.GestorPuntuacion;
 import nevsrg.puntuacion.GestorVisualPuntuacion;
 import nevsrg.puntuacion.IStrategyJudge;
+import nevsrg.puntuacion.TipoJudgement;
+import nevsrg.visual.Assets;
+import nevsrg.visual.Recursos;
 
 public class GameScreen implements Screen {
 	private GameNEVSRG game;
 	// Dibujado
 	private SpriteBatch batch;
-	FitViewport viewport;
+	private FitViewport viewport;
 	private OrthographicCamera camara;
 	private Texture pixelNegro;
 	private float alphaFade = 0f;
@@ -48,6 +54,7 @@ public class GameScreen implements Screen {
 	private long tiempoUltimaNota = 0l;
 	private float tiempoDesdeFin = 0f;
 	private boolean nivelTerminado = false;
+	private IAudioManager audio;
 
 	// letras
     private BitmapFont letra;
@@ -72,46 +79,45 @@ public class GameScreen implements Screen {
 		pixelNegro = new Texture(pm);
 		pm.dispose();
 		
+		// Manager del audio para niveles
+		audio = ChartMusicManager.getInstancia();
 		
+		
+		// Iniciar configuraciones
 		GameSettings settings = GameSettings.getInstancia();
 		
 		// Crear Judge
-		IStrategyJudge judge = JudgeFactory.crear(settings.judge);
+		IStrategyJudge judge = JudgeFactory.crear(GameSettings.getInstancia().getJudge());
 		
 		// Generar Carriles
 		Carril[] carriles = new Carril[4];
 		float anchoCarril = 90f;
 		float margenIzquierdo = 460f;
         float receptorY = 70f;
-        float scrollSpeed = settings.getScrollSpeed();	
+        float scrollSpeed = settings.getScrollSpeedNormalizada();	
         
+        Texture texturaReceptorUp = Assets.getInstancia().get(Recursos.RECEPTOR_UP);
+        Texture texturaReceptorDown = Assets.getInstancia().get(Recursos.RECEPTOR_DOWN);
         for (int i = 0 ; i < carriles.length ; i++) {
             float posicionX = margenIzquierdo + (i * anchoCarril);
-            carriles[i] = new Carril(posicionX, receptorY, scrollSpeed, judge);
+            carriles[i] = new Carril(posicionX, receptorY, scrollSpeed, judge, texturaReceptorUp, texturaReceptorDown);
         }
         
         // Procesado del mapa
-        ChartBuilder builder = new ChartBuilder(carriles);
+        Texture normal = Assets.getInstancia().get(Recursos.NOTA_NORMAL);
+        Texture cuerpo = Assets.getInstancia().get(Recursos.NOTA_CUERPO);
+        Texture larga = Assets.getInstancia().get(Recursos.NOTA_COLA);
+        ChartBuilder builder = new ChartBuilder(carriles, audio, normal, cuerpo, larga);
         
-        BeatmapParser parser;
         String ext = metadata.getExtension();
-        switch (ext) {
-        	case "osu":
-        		parser = new OsuParser(builder);
-        		break;	
-        	case "nevsrg":
-        		parser = new NEVSRGParser(builder);
-        		break;
-        	default:
-        		parser = null;
-        		break;
-        }
+        BeatmapParser parser = ParserFactory.crear(ext, builder);
+        
         if (parser == null) {
         	System.err.println("Error: Formato de archivo no soportado: " + ext);
         	game.setScreen(new SelectionScreen(game));
         	return;
         }
-        parser.procesarMapa(rutaMapa, metadata);
+        parser.procesarMapa(metadata, Gdx.files.local(rutaMapa));
         this.nivel = builder.obtenerNivelTerminado();
         
         // Buscar tiempo fin
@@ -119,12 +125,20 @@ public class GameScreen implements Screen {
         
         // Cargar la clase que maneje los inputs
         inputHandler = new InputHandler(this.nivel, settings.copiarTeclas());
-        Gdx.input.setInputProcessor(inputHandler);
         
         // Instanciar los observers
         gestorMatematico = new GestorPuntuacion();
         letra = new BitmapFont();
-        gestorGrafico = new GestorVisualPuntuacion(letra, gestorMatematico);
+        
+        // Inicializar el gestor visual de la puntuacion
+        Map<TipoJudgement, Texture> texturasJudges = new EnumMap<>(TipoJudgement.class);
+        texturasJudges.put(TipoJudgement.MARVELOUS, Assets.getInstancia().get(Recursos.JUDGE_MARVELOUS));
+        texturasJudges.put(TipoJudgement.PERFECT, Assets.getInstancia().get(Recursos.JUDGE_PERFECT));
+        texturasJudges.put(TipoJudgement.GREAT, Assets.getInstancia().get(Recursos.JUDGE_GREAT));
+        texturasJudges.put(TipoJudgement.GOOD, Assets.getInstancia().get(Recursos.JUDGE_GOOD));
+        texturasJudges.put(TipoJudgement.BAD, Assets.getInstancia().get(Recursos.JUDGE_BAD));
+        texturasJudges.put(TipoJudgement.MISS, Assets.getInstancia().get(Recursos.JUDGE_MISS));
+        gestorGrafico = new GestorVisualPuntuacion(letra, texturasJudges, gestorMatematico);
         
         // Suscribir los observers a los carriles
         for (int i = 0 ; i < 4 ; i++) {
@@ -132,10 +146,8 @@ public class GameScreen implements Screen {
         	carriles[i].agregarObservador(gestorGrafico);
         }
         
-        
         // Cargar y Reproducir la Musica (Ultimo Paso)
-        AudioManager.getInstancia().reproducirCancion(this.nivel.getRutaAudio());
-        AudioManager.getInstancia().pausarCancion();
+        audio.reproducirCancion(this.nivel.getRutaAudio());
 	}
 	
 	
@@ -149,7 +161,7 @@ public class GameScreen implements Screen {
 		ScreenUtils.clear(0, 0, 0, 1);
 		
 		// Obtener el tiempo actual de la cancion que sera utilizado para renderizar
-		long tiempoActual = AudioManager.getInstancia().getTiempoMS();
+		long tiempoActual = audio.getTiempoMS();
 		
 		// Checkear si termino el nivel
 		if (tiempoActual >= tiempoUltimaNota) {
@@ -169,7 +181,7 @@ public class GameScreen implements Screen {
 		    }
 		    
 			if (tiempoDesdeFin >= 4) {
-				AudioManager.getInstancia().dejarDeReproducirCancion();
+				audio.dejarDeReproducirCancion();
 				game.setScreen(new ResultScreen(game, gestorMatematico));
 			}
 			 
@@ -179,8 +191,8 @@ public class GameScreen implements Screen {
 		camara.update();
 		batch.setProjectionMatrix(camara.combined);
 		batch.begin();
-		nivel.renderizar(batch);
-		gestorGrafico.renderizar(batch, tiempoActual);
+		nivel.renderizar(batch, delta);
+		gestorGrafico.renderizar(batch);
 		
 		// Dibujar fps
 		int fps = Gdx.graphics.getFramesPerSecond();
@@ -221,7 +233,7 @@ public class GameScreen implements Screen {
 					if (contadorEsc == 1 && (tiempoActual - tiempoUltimoEsc) <= LIMITE_MS) { 
 						// Segunda pulsacion fue dentro del tiempo de 1s
 						contadorEsc = 0;
-						AudioManager.getInstancia().dejarDeReproducirCancion();
+						audio.dejarDeReproducirCancion();
 						game.setScreen(new SelectionScreen(game));
 					} else {
 						contadorEsc = 1;

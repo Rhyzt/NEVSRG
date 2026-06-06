@@ -3,15 +3,13 @@ package nevsrg.parser;
 import java.io.BufferedReader;
 import java.io.IOException;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 
 public class OsuParser extends BeatmapParser{
 	private BufferedReader lector;
 	
-	// Offset entre motor NEVSRG Y Osu! que existira para la reproduccion de canciones
-	/* Esta obtenido manualmente revisando un video 
-	 * para medir el desfase de una nota y la musica.
+	// Offset entre motor LibGDX Y osu! que existira para la reproduccion de canciones
+	/* Esta obtenido manualmente para medir el desfase de una nota y la musica.
 	 */
 	private static final long OFFSET_MS = 150l;
 	
@@ -19,17 +17,21 @@ public class OsuParser extends BeatmapParser{
 		super(builder);
 	}
 	
-	public void abrirArchivo(String rutaArchivo){
-		// Se carga el archivo
-	    FileHandle archivoMapa = Gdx.files.local(rutaArchivo);
-	    
+	@Override
+	protected void abrirArchivo(FileHandle archivoMapa){  
 	    // Se crea el lector
 	    this.lector = archivoMapa.reader(8192, "UTF-8");
 	}
 	
-	public void procesarNotas(){
+	@Override
+	protected void procesarNotas(){
 		try {
+			if (lector == null) {
+		        System.out.println("Error: archivo no fue abierto correctamente");
+		        return;
+		    }
 			String linea = lector.readLine();
+			
 			
 			//Buscamos la linea "[HitObjects]"
 			while (linea != null && !linea.equals("[HitObjects]")) {
@@ -56,12 +58,14 @@ public class OsuParser extends BeatmapParser{
 			 */
 			
 			String lineaNota;
-			lineaNota = lector.readLine(); 
-			while (lineaNota != null) { // Leer hasta el final del archivo
+			while ((lineaNota = lector.readLine()) != null) { // Leer hasta el final del archivo
 				String[] datosNotas = lineaNota.split(",");
+				if (datosNotas.length < 4) continue; // Para notas normales
+				if (datosNotas[3].equals("128") && datosNotas.length < 6) continue; // Para notas largas
 				
 				int carril = Integer.parseInt(datosNotas[0]) / 128;
 				long tiempoHit = Long.parseLong(datosNotas[2]);
+				
 				// Revisamos si es una nota larga o nota normal
 				if (!datosNotas[3].equals("128")) {
 					// Es una Nota Normal
@@ -73,7 +77,6 @@ public class OsuParser extends BeatmapParser{
 					long duracion = tiempoRelease - tiempoHit;
 					builder.agregarNotaLarga(carril, tiempoHit + OFFSET_MS, duracion);
 				}
-				lineaNota = lector.readLine(); 
 			}
 		} catch (IOException ex) {
 			System.out.println("Ocurrio un error al procesar el mapa : " + ex.getMessage());
@@ -81,7 +84,8 @@ public class OsuParser extends BeatmapParser{
 		}
 	}
 	
-	public void cerrarArchivo(){
+	@Override
+	protected void cerrarArchivo(){
 		try {
 			// Liberar memoria usada por el lector
 			lector.close();

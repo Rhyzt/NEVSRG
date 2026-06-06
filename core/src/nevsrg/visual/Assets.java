@@ -23,7 +23,8 @@ public class Assets {
 	    assets.load(Recursos.NOTA_NORMAL, Texture.class);
 	    assets.load(Recursos.NOTA_CUERPO, Texture.class);
 	    assets.load(Recursos.NOTA_COLA, Texture.class);
-	    assets.load(Recursos.RECEPTOR, Texture.class);
+	    assets.load(Recursos.RECEPTOR_UP, Texture.class);
+	    assets.load(Recursos.RECEPTOR_DOWN, Texture.class);
 	    assets.load(Recursos.JUDGE_MARVELOUS, Texture.class);
 	    assets.load(Recursos.JUDGE_PERFECT, Texture.class);
 	    assets.load(Recursos.JUDGE_GREAT, Texture.class);
@@ -36,6 +37,5 @@ public class Assets {
 	// Para obtener cualquier textura
 	 public Texture get(String ruta) {
 	        return assets.get(ruta, Texture.class);
-	    }
-	
+	 }
 }

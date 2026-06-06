@@ -12,7 +12,7 @@ public class MetadataNivel {
 		this.artista = artista;
 		this.titulo = titulo;
 		this.mapper = mapper;
-		this.extension = null;
+		this.extension = null; // Extension de archivo fuente
 	}
 	
 	public String getRutaAudio() { return rutaAudio; }
@@ -21,7 +21,10 @@ public class MetadataNivel {
 	public String getMapper() { return mapper; }
 	public String getExtension() { return extension; }
 	
-	public void setRutaAudio(String ruta) { rutaAudio = ruta; }
+	public void setRutaAudio(String ruta) {
+		if (ruta != null && !ruta.isEmpty())
+		rutaAudio = ruta;
+	}
 	public void setArtista(String artista) { this.artista = artista; }
 	public void setTitulo(String titulo) { this.titulo = titulo; }
 	public void setMapper(String mapper) { this.mapper = mapper; }

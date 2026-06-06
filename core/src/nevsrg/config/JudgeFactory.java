@@ -1,31 +1,36 @@
 package nevsrg.config;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import nevsrg.puntuacion.IStrategyJudge;
 import nevsrg.puntuacion.JudgeDificil;
 import nevsrg.puntuacion.JudgeEstandar;
 import nevsrg.puntuacion.JudgeFacil;
 import nevsrg.puntuacion.JudgeJustice;
 
-public class JudgeFactory {
-	private static final String[] NOMBRES = { "Facil", "Estandar", "Dificil", "Justice" };
-	
-	public static String[] getNombres() {
-		return NOMBRES;
+public class JudgeFactory implements IJudgeValidator {
+	private static final Map<String, Supplier<IStrategyJudge>> JUDGES = new LinkedHashMap<>();
+	static {
+	    JUDGES.put("Facil",    JudgeFacil::new);
+	    JUDGES.put("Estandar", JudgeEstandar::new);
+	    JUDGES.put("Dificil",  JudgeDificil::new);
+	    JUDGES.put("Justice",  JudgeJustice::new);
 	}
 	
-	public static boolean esJudgeValido(String nombre) {
-		if (nombre == null) return false;
-		
-		for (String actual : NOMBRES) {
-			if (actual.equals(nombre)) return true;
-		}
-		return false;
+	@Override
+	public String[] getJudgesDisponibles() {
+	    return JUDGES.keySet().toArray(new String[0]);
+	}
+	
+	@Override
+	public boolean esJudgeValido(String nombre) {
+		return nombre != null && JUDGES.containsKey(nombre);
 	}
 	
 	public static IStrategyJudge crear(String nombre) {
-		if ("Facil".equals(nombre)) return new JudgeFacil();
-		if ("Dificil".equals(nombre)) return new JudgeDificil();
-		if ("Justice".equals(nombre)) return new JudgeJustice();
-		return new JudgeEstandar();
+		Supplier<IStrategyJudge> supplier = JUDGES.getOrDefault(nombre, JudgeEstandar::new);
+		return supplier.get();
 	}
 }

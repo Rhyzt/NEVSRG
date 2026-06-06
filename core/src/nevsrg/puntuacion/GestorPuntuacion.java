@@ -3,7 +3,7 @@ package nevsrg.puntuacion;
 import java.util.EnumMap;
 import java.util.Map;
 
-public class GestorPuntuacion implements IObserverJudge { 
+public class GestorPuntuacion implements IObserverJudge, ILectorPuntuacion{ 
 	private int comboActual;
 	private int comboMaximo;
 	private float precision;
@@ -25,12 +25,18 @@ public class GestorPuntuacion implements IObserverJudge {
         }
 	}
 	
+	@Override
 	public int getCantidadJudges(TipoJudgement judge) {
 		return conteoJudges.get(judge);
 	}
+	
+	@Override
 	public int getComboActual() { return comboActual; }
+	@Override
 	public int getComboMaximo() { return comboMaximo; }
+	@Override
 	public float getPrecision() { return precision; }
+	@Override
 	public int getNotasTotales() { return notasTotales; }
 	
 	// Sera activada en cada pulsacion o release de nota larga hecho
@@ -39,18 +45,17 @@ public class GestorPuntuacion implements IObserverJudge {
 		int cantidadActual = conteoJudges.get(resultado);
 		conteoJudges.put(resultado, cantidadActual + 1);
 		
-		if (resultado == TipoJudgement.MISS || resultado == TipoJudgement.BAD || resultado == TipoJudgement.GOOD) {
+		if (resultado.esComboBreak()) {
 			// Si es un combo break, se reinicia el combo.
-			if (comboActual > comboMaximo)
-				comboMaximo = comboActual;
 			comboActual = 0;
 		} else {
-			// Si no es un combo break, se aumenta el combo y se actualiza el maximo de ser necesario
+			// Si no es un combo break, se aumenta el combo
 			comboActual += 1;
-			if (comboActual > comboMaximo) {
-		        comboMaximo = comboActual;
-		    }
 		}
+		// Si el combo actual supera al maximo, se actualiza
+		if (comboActual > comboMaximo) {
+	        comboMaximo = comboActual;
+	    }
 		// Se a;ade la nota y se recalcula la precision
 		notasTotales += 1;
 		precision = calcularPrecision();
@@ -65,19 +70,18 @@ public class GestorPuntuacion implements IObserverJudge {
 	 * BAD: 10%
 	 * MISS: 0%
 	 * 
+	 * Estan en TipoJudgement
 	 * Se multiplican por su %, sumadas todas y luego se dividen por el total de notas multiplicado por 100
 	 */
 	private float calcularPrecision() {
 		if (notasTotales == 0) return 100f;
 		
-		int maxScore =  100 * notasTotales;
-		int marvelousWeight = 100 * conteoJudges.get(TipoJudgement.MARVELOUS);
-		int perfectWeight = 98 * conteoJudges.get(TipoJudgement.PERFECT);
-		int greatWeight = 70 * conteoJudges.get(TipoJudgement.GREAT);
-		int goodWeight = 35 * conteoJudges.get(TipoJudgement.GOOD);
-		int badWeight = 10 * conteoJudges.get(TipoJudgement.BAD);
+		int sumaWeights = 0;
 		
-		int sumaWeights = marvelousWeight + perfectWeight + greatWeight + goodWeight + badWeight;
+		int maxScore =  100 * notasTotales;
+		for (TipoJudgement tipo : TipoJudgement.values()) {
+	        sumaWeights += tipo.getPeso() * conteoJudges.get(tipo);
+	    }
 		
 		return ((float) sumaWeights) / maxScore * 100f;
 	}

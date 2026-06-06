@@ -5,7 +5,8 @@ public class Recursos {
     public static final String NOTA_NORMAL = "notes/nota.png";
     public static final String NOTA_CUERPO = "notes/cuerpoLN.png";
     public static final String NOTA_COLA = "notes/colaLN.png";
-    public static final String RECEPTOR = "notes/receptor.png";
+    public static final String RECEPTOR_UP = "notes/receptorUp.png";
+    public static final String RECEPTOR_DOWN = "notes/receptorDown.png";
 
     // Judgements
     public static final String JUDGE_MARVELOUS = "judgements/marvelous.png";
@@ -17,4 +18,6 @@ public class Recursos {
 
     // UI
     public static final String UI_SKIN = "uiskin.json";
+    
+    private Recursos() {}
 }

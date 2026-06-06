@@ -28,6 +28,10 @@ replay_pid*
 # Carpetas de compilacion
 core/build/
 desktop/build/
+bin/
+build/
+.gradle/
+desktop/bin/
 
 # Archivos de configuracion del IDE
 .settings/
@@ -40,4 +44,5 @@ charts/
 settings.json
 
 #Gradle cache
+.bin/
 .gradle/

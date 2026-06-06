@@ -1,23 +1,30 @@
 package nevsrg.puntuacion;
 
 public class JudgeJustice implements IStrategyJudge {
+	private static final long MARVELOUS_MS = 4;
+	private static final long PERFECT_MS   = 9;
+	private static final long GREAT_MS     = 18;
+	private static final long GOOD_MS      = 27;
+	private static final long BAD_MS       = 36;
+	private static final double FACTOR_RELEASE = 1.3;
+	
 	
 	@Override
 	public TipoJudgement evaluarJudgement(long diferenciaMS) {
-		if (diferenciaMS <= 4) return TipoJudgement.MARVELOUS;
-		if (diferenciaMS <= 9) return TipoJudgement.PERFECT;
-		if (diferenciaMS <= 18) return TipoJudgement.GREAT;
-		if (diferenciaMS <= 27) return TipoJudgement.GOOD;
-		if (diferenciaMS <= 36) return TipoJudgement.BAD;
+		if (diferenciaMS <= MARVELOUS_MS) return TipoJudgement.MARVELOUS;
+		if (diferenciaMS <= PERFECT_MS) return TipoJudgement.PERFECT;
+		if (diferenciaMS <= GREAT_MS) return TipoJudgement.GREAT;
+		if (diferenciaMS <= GOOD_MS) return TipoJudgement.GOOD;
+		if (diferenciaMS <= BAD_MS) return TipoJudgement.BAD;
 		return TipoJudgement.MISS;
 	}
 	
 	@Override
 	public TipoJudgement evaluarJudgementRelease(long diferenciaMS) {
-		if (diferenciaMS <= 4 * 1.3) return TipoJudgement.MARVELOUS;
-		if (diferenciaMS <= 9 * 1.3) return TipoJudgement.PERFECT;
-		if (diferenciaMS <= 27 * 1.3) return TipoJudgement.GREAT;
-		if (diferenciaMS <= 36 * 1.3) return TipoJudgement.GOOD;
+		if (diferenciaMS <= MARVELOUS_MS * FACTOR_RELEASE) return TipoJudgement.MARVELOUS;
+		if (diferenciaMS <= PERFECT_MS * FACTOR_RELEASE) return TipoJudgement.PERFECT;
+		if (diferenciaMS <= GREAT_MS * FACTOR_RELEASE) return TipoJudgement.GREAT;
+		if (diferenciaMS <= GOOD_MS * FACTOR_RELEASE) return TipoJudgement.GOOD;
 		return TipoJudgement.BAD;
 	}
 }

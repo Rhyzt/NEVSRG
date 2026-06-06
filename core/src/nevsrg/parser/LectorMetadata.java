@@ -10,7 +10,7 @@ public abstract class LectorMetadata {
 	
 	public final MetadataNivel extraerMetadata(FileHandle archivo, String extension) {
 		// Le damos valores por defecto a la metadata
-		MetadataNivel metadata = new MetadataNivel("audio.mp3", "Desconocido", archivo.nameWithoutExtension(), "Desconocido");
+		MetadataNivel metadata = new MetadataNivel(null, null, archivo.nameWithoutExtension(), null);
         metadata.setExtension(extension);
 		
         // Leemos el archivo
@@ -23,17 +23,17 @@ public abstract class LectorMetadata {
                     if (t != null) metadata.setTitulo(t);
                 }
                 
-                if (metadata.getArtista().equals("Desconocido")) {
+                if (metadata.getArtista() == null) {
                     String a = buscarArtistaEnLinea(linea);
                     if (a != null) metadata.setArtista(a);
                 }
                 
-                if (metadata.getMapper().equals("Desconocido")) {
+                if (metadata.getMapper() == null) {
                     String m = buscarMapperEnLinea(linea);
                     if (m != null) metadata.setMapper(m);
                 }
                 
-                if (metadata.getRutaAudio().equals("audio.mp3")) {
+                if (metadata.getRutaAudio() == null) {
                     String au = buscarAudioEnLinea(linea);
                     if (au != null) {
                     	FileHandle rutaCharts = archivo.parent();
@@ -41,6 +41,12 @@ public abstract class LectorMetadata {
                     	metadata.setRutaAudio(archivoAudio.path());
                     }
                 }
+                if (metadata.getArtista() != null &&
+                        metadata.getTitulo() != null &&
+                        metadata.getMapper() != null &&
+                        metadata.getRutaAudio() != null) {
+                        break;
+                    }
             }
 		} catch (Exception ex) {
 			System.out.println("Error leyendo archivo: " + archivo.name());

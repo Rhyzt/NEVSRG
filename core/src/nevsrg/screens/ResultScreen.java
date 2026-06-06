@@ -20,7 +20,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 import nevsrg.entidades.GameNEVSRG;
-import nevsrg.puntuacion.GestorPuntuacion;
+import nevsrg.puntuacion.ILectorPuntuacion;
 import nevsrg.puntuacion.TipoJudgement;
 import nevsrg.visual.Assets;
 import nevsrg.visual.Recursos;
@@ -30,9 +30,9 @@ public class ResultScreen implements Screen {
 	private Stage stage;
 	private final GameNEVSRG game;
 	private Skin skin;
-	private GestorPuntuacion informacionPuntuacion;
+	private ILectorPuntuacion informacionPuntuacion;
 
-	public ResultScreen(GameNEVSRG game, GestorPuntuacion gestor) {
+	public ResultScreen(GameNEVSRG game, ILectorPuntuacion gestor) {
 		this.game = game;
 		this.informacionPuntuacion = gestor;
 	}
@@ -70,33 +70,10 @@ public class ResultScreen implements Screen {
 		Table tablaJudges = new Table();
 		tablaJudges.setPosition(600, 330);
 		for (TipoJudgement tipo : TipoJudgement.values()) {
+			// Se obtiene la textura del judge
+			Texture textura = Assets.getInstancia().get(tipo.getRecurso());
 
-			Texture textura;
-			switch (tipo) {
-				case MARVELOUS:
-					textura = Assets.getInstancia().get(Recursos.JUDGE_MARVELOUS);
-					break;
-				case PERFECT:
-					textura = Assets.getInstancia().get(Recursos.JUDGE_PERFECT);
-					break;
-				case GREAT:
-					textura = Assets.getInstancia().get(Recursos.JUDGE_GREAT);
-					break;
-				case GOOD:
-					textura = Assets.getInstancia().get(Recursos.JUDGE_GOOD);
-					break;
-				case BAD:
-					textura = Assets.getInstancia().get(Recursos.JUDGE_BAD);
-					break;
-				case MISS:
-					textura = Assets.getInstancia().get(Recursos.JUDGE_MISS);
-					break;
-				default:
-					textura = null;
-					break;
-			};
-
-			// Imagen del judge
+			// Se crea la imagen del judge
 			Image imagenJudge = new Image(textura);
 			imagenJudge.setScaling(Scaling.fit);
 			tablaJudges.add(imagenJudge).height(40).width(200).left();
