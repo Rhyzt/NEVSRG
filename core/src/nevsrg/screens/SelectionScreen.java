@@ -108,22 +108,22 @@ public class SelectionScreen implements Screen {
 	    }
     
     private void cargarMapas(Table tabla) {
-    	FileHandle carpetaCharts = Gdx.files.local("charts"); // CASO .JAR
-
+    	FileHandle carpetaCharts; 
     	
-    	if (!carpetaCharts.exists()) { // CASO IDE
-            FileHandle carpetaIDE = Gdx.files.local("../charts");
-            if (carpetaIDE.exists()) {
-                carpetaCharts = carpetaIDE; // Usamos la ruta del IDE
-            }
+    	// Detectar si estamos en el IDE o ejecutando del .jar
+    	String directorioActual = System.getProperty("user.dir").toLowerCase();
+    	
+    	if (directorioActual.endsWith("desktop") || directorioActual.endsWith("assets")) {
+    		// Si estamos en desktop o assets (caso IDE)
+            carpetaCharts = Gdx.files.local("../charts");
+        } else {
+        	// Si estamos fuera de assets (caso .jar)
+            carpetaCharts = Gdx.files.local("charts");  
         }
+    	
     	if (!(carpetaCharts.exists() && carpetaCharts.isDirectory())) {
     		carpetaCharts.mkdirs(); // Se crea la carpeta si no existe
     	}
-    	
-    	System.out.println("=== Ruta charts: " + carpetaCharts.path());
-	    System.out.println("=== Existe: " + carpetaCharts.exists());
-	    System.out.println("=== Cantidad de items: " + carpetaCharts.list().length);
     	    
         for (FileHandle subCarpeta : carpetaCharts.list()) { // Iterar por todas las carpetas dentro de charts
         	if (subCarpeta.isDirectory()) {
