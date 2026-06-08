@@ -26,6 +26,20 @@ También se puede ejecutar el siguiente comando para regenerar los archivos de c
 ---
 ## Ejecución
 
+### Ejecucion desde Release
+Si quieres jugar sin necesidad de compilar algo, sigue estos pasos:
+
+1. **Descarga el archivo**: Busca la sección "Releases" en la parte derecha de esta página de GitHub y haz clic en el archivo .zip más reciente (ej. [NEVSRG.zip](https://github.com/Rhyzt/NEVSRG/releases/tag/v1.0.0)).
+
+2. **Descomprime**: Extrae el contenido del archivo .zip en una carpeta de tu preferencia en tu computadora.
+
+3. **Ejecuta el juego**: Haz doble clic sobre el archivo NEVSRG-desktop.jar.
+
+**Nota**: Asegúrate de tener instalado Java Runtime Environment (JRE) o JDK (versión 8 o superior) en tu sistema para ejecutar el juego correctamente.
+
+**¡Disfruta!**: El juego cargará automáticamente los mapas que se encuentran en la carpeta charts.
+
+
 ### Ejecución Desde Eclipse
 
 1. En el explorador de paquetes, abrir el módulo desktop.
@@ -71,6 +85,8 @@ Cada mapa debe estar dentro de su propia subcarpeta y debe contener al menos: <b
 •Un archivo .nevsrg u .osu. <br>
 •El archivo de audio correspondiente, normalmente audio.mp3. <br>
 
+El `.zip` en release contiene 5 niveles de prueba. Con 4 tipo .osu y 1 tipo .nevsrg
+
 ### Caso Ejecucion IDE
 Los mapas deben ubicarse dentro de la carpeta charts, ubicada en la raíz del proyecto y a la misma altura que carpetas como assets, desktop o core.
 
@@ -85,7 +101,6 @@ NEVSRG/
 
 
 ### Caso Build
-
 Los mapas deben ubicarse en una carpeta llamada charts a la misma altura que el .jar
 
 Ejemplo:
